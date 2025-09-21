@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ThreadlessCoin</title>
 
-<!-- CSP (GitHub Pages-safe) -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   base-uri 'none';
@@ -15,11 +14,9 @@
   script-src 'self' https://cdn.jsdelivr.net https://cdn.skypack.dev 'unsafe-inline';
   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
   upgrade-insecure-requests;">
-
 <meta http-equiv="Referrer-Policy" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 
-<!-- Favicon: threadless bars with a coin ring -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 
 <style>
@@ -69,6 +66,9 @@ h1{margin:0 0 4px; font-size:22px}
 .logo::before{ content:''; position:absolute; inset:2px; border-radius:10px; border:2px solid var(--accent); opacity:.9; }
 .logo::after{ content:''; width:24px; height:6px; border-radius:6px; background:var(--accent); box-shadow:0 12px 0 var(--accent), 0 24px 0 var(--accent); transform:translateY(-6px) }
 
+.balance{ font-size:20px; font-weight:800; margin-top:8px }
+.label{ color:var(--muted); font-size:12px }
+
 .progress-wrap{ margin-top:12px }
 progress{ width:100%; height:20px; -webkit-appearance:none; appearance:none }
 progress::-webkit-progress-bar{ background: color-mix(in srgb, var(--bg) 90%, black 10%); border:1px solid color-mix(in srgb, var(--line) 75%, black 25%); border-radius:12px }
@@ -109,20 +109,34 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
   <!-- Account -->
   <section class="card">
     <h2 style="margin:0 0 8px">Account</h2>
+
     <div id="authArea">
       <button class="btn" id="signInBtn">Sign in / Sign up via email</button>
       <span class="meta">We’ll send a magic link.</span>
     </div>
+
     <div id="userArea" style="display:none">
-      <div class="meta" id="userEmail"></div>
-      <button class="btn" id="signOutBtn">Sign out</button>
+      <div class="label">Signed in as</div>
+      <div><strong id="userEmail"></strong> • <span id="userName" class="meta"></span></div>
+
+      <div class="balance"><span id="userBalance">0.0000</span> TCOIN</div>
+
+      <div id="nameEditor" style="margin-top:10px; display:none">
+        <input id="nameInput" placeholder="choose a username" style="padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+        <button class="btn" id="saveNameBtn">Save</button>
+      </div>
+
+      <div style="margin-top:10px">
+        <button class="btn" id="editNameBtn">Set / change username</button>
+        <button class="btn" id="signOutBtn">Sign out</button>
+      </div>
     </div>
   </section>
 
   <!-- Mining -->
   <section class="card">
     <h2 style="margin:0 0 8px">Mine ThreadlessCoin</h2>
-    <div class="meta">Your browser crunches a tiny puzzle; correct proofs reward a few coins.</div>
+    <div class="meta">Your browser solves a small proof-of-work. Valid solutions are verified by the server and credited to your balance.</div>
     <div class="progress-wrap">
       <progress id="miningProgress" value="0" max="100"></progress>
       <div id="progressLabel" class="meta" style="margin-top:4px">Idle</div>
@@ -131,10 +145,10 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
       <button class="btn" id="mineBtn" disabled>Start mining</button>
       <button class="btn" id="stopBtn" disabled>Stop</button>
     </div>
-    <div class="meta" id="mineMeta" style="margin-top:8px">Solved: 0 • Pending: 0 • Rewarded: 0 TCOIN</div>
+    <div class="meta" id="mineMeta" style="margin-top:8px">Solved: 0 • Pending: 0</div>
   </section>
 
-  <!-- Send / Receive -->
+  <!-- Send / Receive (left as demo wiring for now) -->
   <section class="card">
     <h2 style="margin:0 0 8px">Send / Receive</h2>
     <div class="meta" style="margin-bottom:10px">Add a friend by username, then send them TCOIN.</div>
@@ -146,34 +160,17 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
     <div class="meta" id="sendMsg" style="margin-top:8px"></div>
   </section>
 
-  <!-- Packages -->
-  <section class="card">
-    <h2 style="margin:0 0 8px">Packages (gift codes)</h2>
-    <div class="meta">Convert coins into a one-time “passid” gift code. Redeemable once.</div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
-      <input id="pkgAmt" type="number" min="0" step="0.0001" placeholder="amount to package" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
-      <button class="btn" id="mkPkgBtn">Make Package</button>
-    </div>
-    <div class="meta" id="pkgOut" style="margin-top:8px"></div>
-
-    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px">
-      <input id="redeemCode" placeholder="enter passid to redeem" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
-      <button class="btn" id="redeemBtn">Redeem</button>
-    </div>
-    <div class="meta" id="redeemMsg" style="margin-top:8px"></div>
-  </section>
-
-  <footer class="meta" style="text-align:center;margin:36px 0">© 2025 ThreadlessCoin (demo)</footer>
+  <footer class="meta" style="text-align:center;margin:36px 0">© 2025 ThreadlessCoin</footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
 
-/* ====== CONFIG: PUT YOUR VALUES ====== */
+/* ====== CONFIG (yours) ====== */
 const TC = {
-  SUPABASE_URL:  "https://vgdskvrovkekoxkixzsh.supabase.co",     // <-- update
-  SUPABASE_ANON: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo",                         // <-- update
+  SUPABASE_URL:  "https://vgdskvrovkekoxkixzsh.supabase.co",
+  SUPABASE_ANON: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo",
   sb: null,
 };
 
@@ -190,119 +187,160 @@ const TC = {
   });
 })();
 
-/* ====== BOOT / AUTH ====== */
+/* ====== HELPERS ====== */
+const $ = (id)=>document.getElementById(id);
+const fmt = (n)=>Number(n||0).toFixed(4);
+
+/* ====== AUTH / PROFILE ====== */
 (async function boot(){
-  console.log('[TC] boot A: init');
-  const status = document.getElementById('status');
-  const authArea = document.getElementById('authArea');
-  const userArea = document.getElementById('userArea');
-  const userEmail = document.getElementById('userEmail');
-  const mineBtn = document.getElementById('mineBtn');
-  const stopBtn = document.getElementById('stopBtn');
+  const status = $('status');
+  const authArea = $('authArea');
+  const userArea = $('userArea');
+  const userEmail = $('userEmail');
+  const userName = $('userName');
+  const userBalance = $('userBalance');
+  const mineBtn = $('mineBtn'), stopBtn=$('stopBtn');
 
   function setStatus(s){ status.textContent = s; }
-  function setSignedInUI(email){
-    authArea.style.display = 'none';
-    userArea.style.display = '';
-    userEmail.textContent = email || '';
-    mineBtn.disabled = false;   // enable mining once signed in
-    stopBtn.disabled = true;
-    setStatus('online');
-  }
-  function setSignedOutUI(){
-    authArea.style.display = '';
-    userArea.style.display = 'none';
-    mineBtn.disabled = true;
-    stopBtn.disabled = true;
-    setStatus('signed out');
-  }
+  function showSignedIn(email){ authArea.style.display='none'; userArea.style.display=''; userEmail.textContent=email||''; mineBtn.disabled=false; stopBtn.disabled=true; setStatus('online'); }
+  function showSignedOut(){ authArea.style.display=''; userArea.style.display='none'; mineBtn.disabled=true; stopBtn.disabled=true; setStatus('signed out'); }
 
-  // Create client immediately so it can parse magic-link fragments
   TC.sb = supabase.createClient(TC.SUPABASE_URL, TC.SUPABASE_ANON);
 
-  // If returning from email link, this will parse the URL (#access_token=...)
-  // and store the session; it also works if there is already a session.
-  const sessRes = await TC.sb.auth.getSession();
-  console.log('[TC] boot B: session?', !!sessRes?.data?.session);
-
-  // Keep UI in sync with any auth changes
-  TC.sb.auth.onAuthStateChange(async (event, session) => {
-    console.log('[TC] auth:', event);
-    if (session?.user) setSignedInUI(session.user.email);
-    else setSignedOutUI();
-  });
-
-  // Initial user check
-  const ures = await TC.sb.auth.getUser();
-  if (ures.data?.user) setSignedInUI(ures.data.user.email);
-  else setSignedOutUI();
-
-  // Buttons
-  document.getElementById('signInBtn').addEventListener('click', async ()=>{
-    const email = prompt('Enter your email for a magic link:');
-    if (!email) return;
-    // send users to auth.html for the friendly success screen
-    const redirectTo = new URL('./auth.html', location.href).href;
-    const { error } = await TC.sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo }});
-    alert(error ? ('Failed: ' + (error.message||'error')) : 'Check your email for the link!');
-  });
-
-  document.getElementById('signOutBtn').addEventListener('click', async ()=>{
-    await TC.sb.auth.signOut();
-    setSignedOutUI();
-  });
-})();
-
-/* ====== MINING (UI only demo) ====== */
-(function mining(){
-  const mineBtn = document.getElementById('mineBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const bar     = document.getElementById('miningProgress');
-  const label   = document.getElementById('progressLabel');
-  const meta    = document.getElementById('mineMeta');
-
-  let running = false;
-  let solved = 0, pending = 0, rewarded = 0;
-
-  function updateMeta(){ meta.textContent = `Solved: ${solved} • Pending: ${pending} • Rewarded: ${rewarded.toFixed(4)} TCOIN`; }
-
-  async function mineLoop(){
-    running = true;
-    bar.value = 0;
-    label.textContent = 'Working…';
-    pending++;
-
-    for (let i=0; i<=100 && running; i++){
-      bar.value = i;
-      await new Promise(r=>setTimeout(r, 40));
-    }
-    if (!running){ label.textContent='Stopped'; pending=Math.max(0,pending-1); updateMeta(); return; }
-
-    solved++; pending--; rewarded += 0.1;
-    updateMeta();
-    label.textContent = 'Proof found! Reward +0.1';
-    bar.value = 100;
-
-    if (running) setTimeout(()=>mineLoop(), 600);
+  async function loadProfile(){
+    const { data, error } = await TC.sb.from('profiles').select('username,balance').single();
+    if (error){ console.warn('profile load', error); return; }
+    userName.textContent = data.username ? '@'+data.username : '(no username yet)';
+    userBalance.textContent = fmt(data.balance);
+    // Prompt username if missing
+    $('nameEditor').style.display = data.username ? 'none':'';
   }
 
-  mineBtn.addEventListener('click', ()=>{
+  // auth state watcher
+  TC.sb.auth.onAuthStateChange(async (_evt, session)=>{
+    if (session?.user){ showSignedIn(session.user.email); await ensureProfile(); await loadProfile(); }
+    else showSignedOut();
+  });
+
+  // initial
+  const ures = await TC.sb.auth.getUser();
+  if (ures.data?.user){ showSignedIn(ures.data.user.email); await ensureProfile(); await loadProfile(); }
+  else showSignedOut();
+
+  // email sign-in
+  $('signInBtn').addEventListener('click', async ()=>{
+    const email = prompt('Enter your email for a magic link:');
+    if (!email) return;
+    const redirectTo = new URL('./auth.html', location.href).href;
+    const { error } = await TC.sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo }});
+    alert(error ? ('Failed: '+(error.message||'error')) : 'Check your email!');
+  });
+
+  $('signOutBtn').addEventListener('click', async ()=>{ await TC.sb.auth.signOut(); showSignedOut(); });
+
+  $('editNameBtn').addEventListener('click', ()=>{
+    const ed = $('nameEditor'); ed.style.display = ed.style.display ? '' : '';
+  });
+
+  $('saveNameBtn').addEventListener('click', async ()=>{
+    const raw = ($('nameInput').value||'').trim();
+    if (!raw) return;
+    const { data, error } = await TC.sb.rpc('set_username', { new_username: raw });
+    if (error) { alert(error.message); return; }
+    $('nameInput').value = '';
+    await loadProfile();
+  });
+
+  async function ensureProfile(){
+    // Selecting your row will 404 until trigger inserted it—keep calling until exists.
+    let tries=0;
+    while(tries<3){
+      const r = await TC.sb.from('profiles').select('id').single();
+      if (!r.error) return;
+      await new Promise(r=>setTimeout(r, 300));
+      tries++;
+    }
+  }
+
+  // expose for mining refresh
+  window._tcReloadProfile = loadProfile;
+})();
+
+/* ====== MINING (server-verified) ====== */
+(function mining(){
+  const mineBtn = $('mineBtn'), stopBtn=$('stopBtn');
+  const bar=$('miningProgress'), label=$('progressLabel'), meta=$('mineMeta');
+  let running=false, solved=0, pending=0;
+
+  function updateMeta(){ meta.textContent = `Solved: ${solved} • Pending: ${pending}`; }
+
+  async function sha256Hex(s){
+    const buf = new TextEncoder().encode(s);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function getChallenge(){
+    const { data, error } = await TC.sb.rpc('get_challenge', { difficulty: 3 });
+    if (error) throw error;
+    return data; // { id, seed, difficulty }
+  }
+
+  async function submitSolution(id, nonce){
+    const { data, error } = await TC.sb.rpc('submit_mining_solution', { challenge_id: id, nonce });
+    if (error) throw error;
+    return data; // reward numeric
+  }
+
+  async function mineOnce(){
+    const ch = await getChallenge();
+    // find nonce such that sha256(seed||nonce) has difficulty leading hex zeros
+    const target = '0'.repeat(ch.difficulty);
+    label.textContent = `Working (difficulty ${ch.difficulty})…`;
+    pending++; updateMeta();
+
+    let found = null;
+    bar.value = 0;
+    let attempts = 0;
+    const step = 1500; // attempts per slice
+    while(running){
+      for (let i=0;i<step;i++){
+        attempts++;
+        const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        // eslint-disable-next-line no-await-in-loop
+        const h = await sha256Hex(ch.seed + nonce);
+        if (h.startsWith(target)){ found = nonce; break; }
+      }
+      bar.value = Math.min(100, Math.floor(Math.log10(1+attempts)*25)); // smooth-ish
+      if (found) break;
+      // yield to UI
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise(r=>setTimeout(r, 0));
+    }
+    if (!running){ pending--; updateMeta(); label.textContent='Stopped'; return; }
+
+    // claim on server
+    try{
+      const reward = await submitSolution(ch.id, found);
+      solved++; pending--; updateMeta();
+      label.textContent = `Proof found! +${reward.toFixed(4)} TCOIN`;
+      await window._tcReloadProfile?.();
+    }catch(e){
+      pending--; updateMeta();
+      label.textContent = 'Submit failed: ' + (e.message||'error');
+    }
+  }
+
+  mineBtn.addEventListener('click', async ()=>{
     if (running) return;
     running = true;
-    mineBtn.disabled = true;
-    stopBtn.disabled = false;
-    updateMeta();
-    mineLoop();
+    mineBtn.disabled = true; stopBtn.disabled = false;
+    while(running){ await mineOnce(); if (running) await new Promise(r=>setTimeout(r, 400)); }
   });
 
   stopBtn.addEventListener('click', ()=>{
-    running = false;
-    mineBtn.disabled = false;
-    stopBtn.disabled = true;
-    label.textContent = 'Idle';
+    running=false; mineBtn.disabled=false; stopBtn.disabled=true; label.textContent='Idle';
   });
-
-  updateMeta();
 })();
 </script>
 </body>
