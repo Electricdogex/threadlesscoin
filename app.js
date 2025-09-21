@@ -2,9 +2,20 @@
   const { SUPABASE_URL, SUPABASE_ANON_KEY } = window.ENV;
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // === Theme wiring (Threadless style) ===
+  const themeSel = document.getElementById('theme');
+  const savedTheme = localStorage.getItem('threadless_theme') || 'forest';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeSel.value = savedTheme;
+  themeSel.addEventListener('change', () => {
+    document.documentElement.setAttribute('data-theme', themeSel.value);
+    localStorage.setItem('threadless_theme', themeSel.value);
+  });
+
   const $ = (id) => document.getElementById(id);
   const authBox = $('auth'), profileBox = $('profile'), walletBox = $('wallet');
   const miningBox = $('mining'), friendsBox = $('friends'), packagesBox = $('packages');
+  const toast = (m)=>{ const t=$('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none',1500); };
 
   function uiSignedIn(on) {
     authBox.style.display = on ? 'none' : 'block';
@@ -12,14 +23,14 @@
   }
 
   async function refreshBalance() {
-    const { data, error } = await sb.from('wallets').select('balance').maybeSingle();
-    if (!error && data) $('balance').textContent = data.balance ?? 0;
+    const { data } = await sb.from('wallets').select('balance').maybeSingle();
+    $('balance').textContent = data?.balance ?? 0;
   }
 
   async function refreshProfile() {
-    const { data: me, error } = await sb.auth.getUser();
-    if (error || !me.user) return;
-    const { data: prof } = await sb.from('profiles').select('username').eq('id', me.user.id).maybeSingle();
+    const me = (await sb.auth.getUser()).data.user;
+    if (!me) return;
+    const { data: prof } = await sb.from('profiles').select('username').eq('id', me.id).maybeSingle();
     $('meUser').textContent = prof?.username ? `@${prof.username}` : '(no username yet)';
   }
 
@@ -29,10 +40,18 @@
     if (error) return alert(error.message);
     uiSignedIn(true); await refreshProfile(); await refreshBalance();
   };
+
+  // NOTE: signUp now sets a redirect to our success page
   $('signupBtn').onclick = async () => {
-    const { error } = await sb.auth.signUp({ email: $('email').value, password: $('password').value });
+    const emailRedirectTo = `${location.origin}${location.pathname.replace(/\/[^/]*$/, '/') }auth-callback.html`;
+    const { error } = await sb.auth.signUp({
+      email: $('email').value,
+      password: $('password').value,
+      options: { emailRedirectTo }
+    });
     if (error) return alert(error.message);
-    alert('Signed up—now log in.'); 
+    $('authNote').textContent = 'Check your email to confirm your account. After confirming, you’ll see a success screen.';
+    toast('Signup email sent');
   };
 
   // USERNAME
@@ -42,7 +61,9 @@
     const { error } = await sb.rpc('ensure_profile_username', { p_username: u });
     if (error) return alert(error.message);
     await refreshProfile();
-    await sb.from('wallets').insert({ user_id: (await sb.auth.getUser()).data.user.id }).then(()=>{}).catch(()=>{});
+    // ensure wallet row exists
+    const me = (await sb.auth.getUser()).data.user;
+    await sb.from('wallets').insert({ user_id: me.id }).then(()=>{}).catch(()=>{});
     await refreshBalance();
   };
 
@@ -50,10 +71,9 @@
   $('sendBtn').onclick = async () => {
     const to = $('toUser').value.trim().replace(/^@/,'');
     const amt = parseInt($('amt').value, 10);
-    const { data, error } = await sb.rpc('send_coins', { p_to_username: to, p_amount: amt, p_memo: null });
+    const { error } = await sb.rpc('send_coins', { p_to_username: to, p_amount: amt, p_memo: null });
     if (error) return alert(error.message);
-    await refreshBalance();
-    alert('Sent!');
+    await refreshBalance(); toast('Sent!');
   };
 
   // FRIENDS
@@ -61,7 +81,7 @@
     const u = $('friendUser').value.trim().replace(/^@/,'');
     const { error } = await sb.rpc('add_friend', { p_username: u });
     if (error) return alert(error.message);
-    alert('Added!');
+    toast('Friend added');
   };
 
   // PACKAGES
@@ -70,14 +90,13 @@
     const { data, error } = await sb.rpc('create_package', { p_amount: amt });
     if (error) return alert(error.message);
     $('pkgOut').innerHTML = `PassID: <code>${data.passid}</code>`;
-    await refreshBalance();
+    await refreshBalance(); toast('Package created');
   };
   $('redeemBtn').onclick = async () => {
     const code = $('redeemCode').value.trim();
-    const { data, error } = await sb.rpc('redeem_package', { p_passid: code });
+    const { error } = await sb.rpc('redeem_package', { p_passid: code });
     if (error) return alert(error.message);
-    await refreshBalance();
-    alert('Redeemed!');
+    await refreshBalance(); toast('Redeemed!');
   };
 
   // MINING
@@ -96,9 +115,10 @@
     if (!currentChallenge) return;
     miningAbort = false;
     $('mineBtn').textContent = 'Mining… (click to stop)';
-    $('mineBtn').onclick = () => { miningAbort = true; $('mineBtn').textContent = 'Start mining'; $('mineBtn').onclick = startMining; };
+    const stopFn = () => { miningAbort = true; $('mineBtn').textContent = 'Start mining'; $('mineBtn').onclick = startMining; };
+    $('mineBtn').onclick = stopFn;
     await startMining();
-    function startMining(){} // placeholder so we can rebind above
+    function startMining(){} // placeholder
   };
 
   async function sha256Hex(str) {
@@ -109,11 +129,11 @@
 
   async function startMining() {
     const target = '0'.repeat(currentChallenge.difficulty);
-    let nonce = 0;
-    let last = performance.now(), hashes = 0;
+    let nonce = 0, last = performance.now(), hashes = 0;
+    const me = (await sb.auth.getUser()).data.user;
 
     while (!miningAbort) {
-      const digest = await sha256Hex(currentChallenge.challenge + (await sb.auth.getUser()).data.user.id + nonce);
+      const digest = await sha256Hex(currentChallenge.challenge + me.id + nonce);
       hashes++;
       if (digest.startsWith(target)) {
         const { error } = await sb.rpc('submit_solution', { p_challenge: currentChallenge.id, p_nonce: String(nonce) });
