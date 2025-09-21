@@ -33,21 +33,17 @@ h1{ margin:0 0 6px }
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
   (async function(){
-    const SUPABASE_URL  = "https://vgdskvrovkekoxkixzsh.supabase.co";  // <-- update
-    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo";                      // <-- update
+    const SUPABASE_URL  = "https://vgdskvrovkekoxkixzsh.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // This call parses the URL fragment from the magic link and stores the session.
-    await sb.auth.getSession();
+    await sb.auth.getSession(); // store session from URL hash if present
 
     const u = await sb.auth.getUser();
-    const emailEl = document.getElementById('email');
-    if (u.data?.user?.email){ emailEl.textContent = u.data.user.email; }
+    if (u.data?.user?.email){ document.getElementById('email').textContent = u.data.user.email; }
 
     const back = ()=>location.replace('./index.html');
     document.getElementById('go').addEventListener('click', back);
-
-    // Clean up the hash and go back after a short pause
     setTimeout(back, 900);
   })();
   </script>
