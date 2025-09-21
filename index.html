@@ -3,92 +3,96 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ThreadlessCoin · ALPHA</title>
+<title>ThreadlessCoin</title>
 
-<!-- Security -->
+<!-- CSP (GitHub Pages-safe) -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   base-uri 'none';
+  form-action 'self';
   img-src 'self' data:;
   style-src 'self' 'unsafe-inline';
-  script-src 'self' https://cdn.jsdelivr.net;
+  script-src 'self' https://cdn.jsdelivr.net https://cdn.skypack.dev 'unsafe-inline';
   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
   upgrade-insecure-requests;">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Cpath d='M16 20h32M16 32h32M16 44h32' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<!-- Referrer/robots -->
+<meta http-equiv="Referrer-Policy" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Favicon: ThreadlessCoin (threadless bars with a coin ring) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs/%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 
 <style>
-/* ============== Threadless theme tokens (unchanged) ============== */
-:root{ --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27;
-  --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d; --warn:#ffd08f; --bad:#ff8c8c;
-  --font: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; --btn-ink:#28150a }
+/* ========= THEME TOKENS (Threadless style, limited set) ========= */
+:root{
+  --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27;
+  --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d; --warn:#ffd08f;
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
 [data-theme="forest"]{ --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27; --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d; --warn:#ffd08f }
 [data-theme="sunset"]{ --bg:#160f12; --card:#22161b; --ink:#ffeef3; --muted:#c5a7b3; --line:#2d1e25; --accent:#ff6b6b; --accent-2:#ffb86b; --accent-2-ink:#2b130f; --warn:#ffe0b5 }
 [data-theme="midnight"]{ --bg:#0d0f19; --card:#121427; --ink:#e9ebff; --muted:#a9b0d4; --line:#1a1d36; --accent:#8ab4ff; --accent-2:#6ae6c1; --accent-2-ink:#021410; --warn:#ffd9a3 }
 [data-theme="ocean"]{ --bg:#07171d; --card:#0d2330; --ink:#e6fbff; --muted:#a6c9d6; --line:#143244; --accent:#26b0ff; --accent-2:#15d1b2; --accent-2-ink:#01221c; --warn:#ffe6b8 }
 [data-theme="grape"]{ --bg:#160d1a; --card:#231128; --ink:#f6e9ff; --muted:#c7abd8; --line:#31153b; --accent:#c47dff; --accent-2:#ff9fb3; --accent-2-ink:#2b0c18; --warn:#ffe0c1 }
 [data-theme="mono"]{ --bg:#0c0c0c; --card:#141414; --ink:#f5f5f5; --muted:#bcbcbc; --line:#202020; --accent:#ffffff; --accent-2:#d0d0d0; --accent-2-ink:#121212; --warn:#ffd08f }
-[data-theme="x"]{ --bg:#000; --card:#0a0a0a; --ink:#e7e9ea; --muted:#71767b; --line:#2f3336; --accent:#1d9bf0; --accent-2:#1d9bf0; --accent-2-ink:#00131f; --warn:#ffd9a3; --btn-ink:#fff }
-[data-theme="buran"]{ --bg:#0b0c0e; --card:#121418; --ink:#f0f1f3; --muted:#a2a8b3; --line:#1f232b; --accent:#d52b1e; --accent-2:#84b6ff; --accent-2-ink:#06121f; --warn:#ffcc66; --btn-ink:#fff }
-[data-theme="halloween"]{ --bg:#0b0a12; --card:#13111b; --ink:#f7efe4; --muted:#b7a8c6; --line:#241f33; --accent:#ff7a00; --accent-2:#39ff88; --accent-2-ink:#02150a; --warn:#ffd39b; --btn-ink:#1a0e05 }
-/* Backdrops (same vibe as Threadless) */
-html,body{height:100%} body{
+
+/* ========= Base layout (Threadless look) ========= */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
   margin:0;
   background:
     radial-gradient(1200px 600px at 20% -10%, color-mix(in srgb, var(--card) 60%, transparent) 0%, transparent 60%),
     radial-gradient(1000px 800px at 120% -20%, color-mix(in srgb, var(--card) 60%, transparent) 0%, transparent 55%),
     var(--bg);
-  color:var(--ink); font:16px/1.5 var(--font);
+  color:var(--ink);
+  font:16px/1.5 var(--font);
 }
-[data-theme="x"] body{ background: var(--bg)!important; }
-[data-theme="buran"] body{
-  background:
-    radial-gradient(900px 500px at 10% -10%, color-mix(in srgb, var(--card) 55%, transparent) 0%, transparent 60%),
-    radial-gradient(800px 700px at 110% -20%, color-mix(in srgb, var(--card) 55%, transparent) 0%, transparent 55%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.025), rgba(255,255,255,.025) 2px, transparent 2px, transparent 6px),
-    var(--bg)!important;
-}
-[data-theme="halloween"] body{
-  background:
-    radial-gradient(180px 180px at 85% 12%, rgba(255,245,200,.9) 0 35%, rgba(255,245,200,.06) 36% 45%, transparent 46%),
-    radial-gradient(1200px 500px at -10% 0%, rgba(90,70,140,.18) 0 30%, transparent 55%),
-    radial-gradient(900px 400px at 120% -10%, rgba(90,70,140,.14) 0 30%, transparent 60%),
-    repeating-radial-gradient(circle at 10% 20%, rgba(255,255,255,.12) 0 1px, transparent 1px 40px),
-    repeating-radial-gradient(circle at 70% 40%, rgba(255,255,255,.10) 0 1px, transparent 1px 36px),
-    var(--bg)!important;
-  background-attachment: fixed,fixed,fixed,fixed,fixed,fixed;
-}
-
-/* Layout + components (matches Threadless feel) */
-header{ position:sticky; top:0; z-index:3;
-  background:linear-gradient(180deg, color-mix(in srgb, var(--card) 85%, transparent), transparent);
-  backdrop-filter: blur(6px); border-bottom:1px solid var(--line) }
+header{ position:sticky; top:0; z-index:3; background:linear-gradient(180deg, color-mix(in srgb, var(--card) 85%, transparent), transparent); backdrop-filter: blur(6px); border-bottom:1px solid var(--line) }
 .wrap{max-width:860px;margin:0 auto;padding:16px}
+h1{margin:0 0 4px; font-size:22px; letter-spacing:.2px}
+.sub{color:var(--muted);font-size:13px}
 .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .brand{display:flex; align-items:center; gap:12px}
-.logo{ width:32px;height:32px;border-radius:10px;background:var(--bg);border:1px solid var(--line); display:grid; place-items:center }
-.logo::after{ content:'₿'; color:var(--accent); font-weight:900; }
 
-h1{margin:0 0 4px; font-size:22px; letter-spacing:.2px}
-.sub{color:var(--muted); font-size:13px}
+/* ThreadlessCoin logo (threadless bars + coin ring) */
+.logo{ width:32px;height:32px;border-radius:10px;background:var(--bg);border:1px solid var(--line); display:grid; place-items:center; position:relative }
+.logo::before{
+  content:''; position:absolute; inset:2px; border-radius:10px;
+  border:2px solid var(--accent); opacity:.9;
+}
+.logo::after{
+  content:''; display:block; width:24px; height:6px; border-radius:6px; background:var(--accent);
+  box-shadow:0 12px 0 var(--accent), 0 24px 0 var(--accent); transform:translateY(-6px);
+}
+
+/* Buttons/inputs */
+.btn{ border:0; border-radius:12px; padding:10px 14px;
+  background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%));
+  color: var(--btn-ink, #28150a); font-weight:800; cursor:pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.15)
+}
+.btn[disabled]{opacity:.55; cursor:not-allowed}
+
 .theme-switch{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px }
 .theme-select{ appearance:none; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px; padding:6px 10px; cursor:pointer }
 
-.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; margin:12px 0; box-shadow:0 10px 30px rgba(0,0,0,.2)}
-.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-input,select{border-radius:10px;border:1px solid var(--line);padding:8px 10px;background:color-mix(in srgb,var(--bg) 92%,black 8%);color:var(--ink)}
-button{ border:0; border-radius:12px; padding:10px 14px; background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%)); color:var(--btn-ink); font-weight:800; cursor:pointer; box-shadow:0 6px 18px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.15) }
-button[disabled]{opacity:.55; cursor:not-allowed}
-pre,code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace; color:var(--muted)}
-.notice{color:var(--warn); font-size:12px}
-.footer{color:var(--muted); font-size:12px; text-align:center; margin:24px 0}
-.toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--line); color:var(--ink); padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.25); font-size:13px; display:none}
-@media (max-width:720px){ .wrap{padding:12px} .topbar{flex-wrap:wrap} .brand{flex:1 1 100%} }
-</style>
+.card{ margin:16px 0; padding:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
+.meta{color:var(--muted); font-size:12px}
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
-<script defer src="env.js"></script>
-<script defer src="app.js"></script>
+footer{color:var(--muted); font-size:12px; margin:36px 0; text-align:center}
+
+/* Mining progress */
+.progress-wrap{ margin-top:12px }
+progress{ width:100%; height:20px; -webkit-appearance: none; appearance: none; }
+progress::-webkit-progress-bar{ background: color-mix(in srgb, var(--bg) 90%, black 10%); border:1px solid color-mix(in srgb, var(--line) 75%, black 25%); border-radius:12px }
+progress::-webkit-progress-value{ background: var(--accent); border-radius:12px }
+progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
+
+/* Small responsive tweak */
+@media (max-width: 720px){ .wrap{ padding:12px; } .topbar{ flex-wrap:wrap } }
+</style>
 </head>
 <body>
   <header>
@@ -98,98 +102,252 @@ pre,code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace; color:var(-
           <div class="logo" aria-hidden="true"></div>
           <div>
             <h1>ThreadlessCoin</h1>
-            <div class="sub">Community coin for Threadless · ALPHA</div>
+            <div class="sub">A tiny, fun coin demo · 1,000,000 max supply</div>
           </div>
         </div>
-        <div class="theme-switch">
-          Theme:
-          <select id="theme" class="theme-select">
-            <option value="forest">Forest</option>
-            <option value="sunset">Sunset</option>
-            <option value="midnight">Midnight</option>
-            <option value="ocean">Ocean</option>
-            <option value="grape">Grape</option>
-            <option value="mono">Mono</option>
-            <option value="x">X</option>
-            <option value="buran">Buran</option>
-            <option value="halloween">Halloween</option>
-          </select>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="theme-switch">
+            Theme:
+            <select id="theme" class="theme-select" aria-label="Select theme">
+              <option value="forest">Forest</option>
+              <option value="sunset">Sunset</option>
+              <option value="midnight">Midnight</option>
+              <option value="ocean">Ocean</option>
+              <option value="grape">Grape</option>
+              <option value="mono">Mono</option>
+            </select>
+          </div>
+          <span class="meta" id="status">connecting…</span>
         </div>
       </div>
     </div>
   </header>
 
   <main class="wrap">
-    <div class="card" id="auth">
-      <h3>Sign in / Sign up</h3>
-      <div class="row">
-        <input id="email" placeholder="email" type="email" autocomplete="email">
-        <input id="password" placeholder="password" type="password" autocomplete="new-password">
-        <button id="loginBtn">Login</button>
-        <button id="signupBtn">Sign up</button>
-        <span class="notice" id="authNote"></span>
+    <!-- Account -->
+    <section class="card">
+      <h2 style="margin:0 0 8px">Account</h2>
+      <div id="authArea">
+        <button class="btn" id="signInBtn">Sign in / Sign up via email</button>
+        <span class="meta">We’ll send a magic link.</span>
       </div>
-    </div>
+      <div id="userArea" style="display:none">
+        <div class="meta" id="userEmail"></div>
+        <button class="btn" id="signOutBtn">Sign out</button>
+      </div>
+    </section>
 
-    <div class="card" id="profile" style="display:none">
-      <h3>Profile</h3>
-      <div class="row">
-        <input id="username" placeholder="username (3–20)">
-        <button id="saveUserBtn">Save username</button>
-        <span id="meUser"></span>
+    <!-- Mining -->
+    <section class="card">
+      <h2 style="margin:0 0 8px">Mine ThreadlessCoin</h2>
+      <div class="meta">Your browser crunches a tiny puzzle; correct proofs reward a few coins.</div>
+      <div class="progress-wrap">
+        <progress id="miningProgress" value="0" max="100"></progress>
+        <div id="progressLabel" class="meta" style="margin-top:4px">Idle</div>
       </div>
-    </div>
+      <div style="display:flex; gap:8px; margin-top:10px">
+        <button class="btn" id="mineBtn">Start mining</button>
+        <button class="btn" id="stopBtn" disabled>Stop</button>
+      </div>
+      <div class="meta" id="mineMeta" style="margin-top:8px">Solved: 0 • Pending: 0 • Rewarded: 0 TCOIN</div>
+    </section>
 
-    <div class="card" id="wallet" style="display:none">
-      <h3>Wallet</h3>
-      <div class="row">Balance: <strong id="balance">0</strong> TLC</div>
-      <div class="row">
-        <input id="toUser" placeholder="send to @username">
-        <input id="amt" type="number" min="1" step="1" placeholder="amount">
-        <button id="sendBtn">Send</button>
+    <!-- Transfer -->
+    <section class="card">
+      <h2 style="margin:0 0 8px">Send / Receive</h2>
+      <div class="meta" style="margin-bottom:10px">Add a friend by username, then send them TCOIN.</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px">
+        <input id="friend" placeholder="friend username" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)" />
+        <input id="amount" type="number" min="0" step="0.0001" placeholder="amount" style="width:140px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+        <button class="btn" id="sendBtn">Send</button>
       </div>
-    </div>
+      <div class="meta" id="sendMsg" style="margin-top:8px"></div>
+    </section>
 
-    <div class="card" id="mining" style="display:none">
-      <h3>Mining</h3>
-      <div class="row">
-        <select id="difficulty">
-          <option value="3">Easy (3)</option>
-          <option value="4" selected>Normal (4)</option>
-          <option value="5">Hard (5)</option>
-        </select>
-        <button id="issueBtn">Get challenge</button>
-        <button id="mineBtn" disabled>Start mining</button>
-        <span id="hashrate"></span>
+    <!-- Packages -->
+    <section class="card">
+      <h2 style="margin:0 0 8px">Packages (gift codes)</h2>
+      <div class="meta">Convert coins into a one-time “passid” gift code. Redeemable once.</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+        <input id="pkgAmt" type="number" min="0" step="0.0001" placeholder="amount to package" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+        <button class="btn" id="mkPkgBtn">Make Package</button>
       </div>
-      <pre id="challengeView"></pre>
-    </div>
+      <div class="meta" id="pkgOut" style="margin-top:8px"></div>
 
-    <div class="card" id="friends" style="display:none">
-      <h3>Friends</h3>
-      <div class="row">
-        <input id="friendUser" placeholder="add @username">
-        <button id="addFriendBtn">Add</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px">
+        <input id="redeemCode" placeholder="enter passid to redeem" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+        <button class="btn" id="redeemBtn">Redeem</button>
       </div>
-      <ul id="friendList"></ul>
-    </div>
+      <div class="meta" id="redeemMsg" style="margin-top:8px"></div>
+    </section>
 
-    <div class="card" id="packages" style="display:none">
-      <h3>Packages (gift codes)</h3>
-      <div class="row">
-        <input id="pkgAmt" type="number" min="1" step="1" placeholder="amount">
-        <button id="mkPkgBtn">Create package</button>
-      </div>
-      <div id="pkgOut"></div>
-      <div class="row" style="margin-top:8px">
-        <input id="redeemCode" placeholder="paste passID">
-        <button id="redeemBtn">Redeem</button>
-      </div>
-    </div>
-
-    <div class="footer">© 2025 ThreadlessCoin (prototype)</div>
+    <footer>
+      <div>© 2025 ThreadlessCoin (demo)</div>
+    </footer>
   </main>
 
-  <div class="toast" id="toast"></div>
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+  'use strict';
+
+  /* ========= CONFIG ========= */
+  const TC = {
+    SUPABASE_URL:  'https://YOUR-PROJECT.supabase.co', // <-- put yours
+    SUPABASE_ANON: 'YOUR-ANON-KEY',                     // <-- put yours
+    sb: null,
+  };
+
+  /* ========= THEME (same as Threadless) ========= */
+  (function setupTheme(){
+    const sel = document.getElementById('theme');
+    const stored = localStorage.getItem('threadless_theme') || 'forest';
+    document.documentElement.setAttribute('data-theme', stored);
+    sel.value = stored;
+    sel.addEventListener('change', ()=>{
+      const v = sel.value;
+      document.documentElement.setAttribute('data-theme', v);
+      localStorage.setItem('threadless_theme', v);
+    });
+  })();
+
+  /* ========= SUPABASE + AUTH UI ========= */
+  (function boot(){
+    TC.sb = supabase.createClient(TC.SUPABASE_URL, TC.SUPABASE_ANON);
+    const signInBtn  = document.getElementById('signInBtn');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const userArea   = document.getElementById('userArea');
+    const authArea   = document.getElementById('authArea');
+    const userEmail  = document.getElementById('userEmail');
+    const status     = document.getElementById('status');
+
+    function setStatus(s){ status.textContent = s; }
+
+    async function refreshUser(){
+      const { data } = await TC.sb.auth.getUser();
+      if (data?.user){
+        authArea.style.display = 'none';
+        userArea.style.display = '';
+        userEmail.textContent = data.user.email;
+        setStatus('online');
+      } else {
+        authArea.style.display = '';
+        userArea.style.display = 'none';
+        setStatus('signed out');
+      }
+    }
+
+    signInBtn.addEventListener('click', async ()=>{
+      const email = prompt('Enter your email for a magic sign-in link:');
+      if (!email) return;
+      // Important: set redirect to the pretty success page
+      const redirectTo = new URL('./auth.html', location.href).href;
+      const { error } = await TC.sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo }});
+      alert(error ? ('Failed: ' + (error.message||'error')) : 'Check your email for the link!');
+    });
+
+    signOutBtn.addEventListener('click', async ()=>{
+      await TC.sb.auth.signOut();
+      refreshUser();
+    });
+
+    refreshUser();
+  })();
+
+  /* ========= MINING (with progress bar) ========= */
+  (function mining(){
+    const mineBtn = document.getElementById('mineBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const bar     = document.getElementById('miningProgress');
+    const label   = document.getElementById('progressLabel');
+    const meta    = document.getElementById('mineMeta');
+
+    let running = false;
+    let solved = 0, pending = 0, rewarded = 0;
+
+    function updateMeta(){ meta.textContent = `Solved: ${solved} • Pending: ${pending} • Rewarded: ${rewarded} TCOIN`; }
+
+    // Tiny fake “puzzle”: find a hash with N leading zeros (simulated)
+    async function mineLoop(){
+      running = true;
+      bar.value = 0;
+      label.textContent = 'Working…';
+      pending++;
+
+      // Simulate incremental work so the bar moves smoothly
+      for (let i=0; i<=100 && running; i++){
+        bar.value = i;
+        await new Promise(r=>setTimeout(r, 40)); // ~4s per job
+      }
+      if (!running) { label.textContent = 'Stopped'; pending=Math.max(0,pending-1); updateMeta(); return; }
+
+      // “Solved”
+      solved++; pending=Math.max(0,pending-1); rewarded += 0.1; // demo reward
+      updateMeta();
+      label.textContent = 'Proof found! Reward +0.1';
+      bar.value = 100;
+
+      // Auto-queue another job if still running
+      if (running) setTimeout(()=>mineLoop(), 600);
+    }
+
+    mineBtn.addEventListener('click', ()=>{
+      if (running) return;
+      running = true;
+      mineBtn.disabled = true;
+      stopBtn.disabled = false;
+      updateMeta();
+      mineLoop();
+    });
+
+    stopBtn.addEventListener('click', ()=>{
+      running = false;
+      mineBtn.disabled = false;
+      stopBtn.disabled = true;
+      label.textContent = 'Idle';
+    });
+
+    updateMeta();
+  })();
+
+  /* ========= SEND / RECEIVE / PACKAGES (demo wire-up) ========= */
+  (function wallet(){
+    const friend = document.getElementById('friend');
+    const amount = document.getElementById('amount');
+    const sendBtn= document.getElementById('sendBtn');
+    const sendMsg= document.getElementById('sendMsg');
+
+    const pkgAmt = document.getElementById('pkgAmt');
+    const mkPkgBtn= document.getElementById('mkPkgBtn');
+    const pkgOut  = document.getElementById('pkgOut');
+
+    const redeemCode = document.getElementById('redeemCode');
+    const redeemBtn  = document.getElementById('redeemBtn');
+    const redeemMsg  = document.getElementById('redeemMsg');
+
+    // NOTE: These are placeholders; wire to your Supabase tables/functions if desired.
+    sendBtn.addEventListener('click', ()=>{
+      if (!friend.value || !amount.value) return (sendMsg.textContent = 'Enter friend and amount.');
+      sendMsg.textContent = `Sent ${amount.value} TCOIN to @${friend.value} (demo).`;
+      amount.value = '';
+    });
+
+    mkPkgBtn.addEventListener('click', ()=>{
+      const v = Number(pkgAmt.value||0);
+      if (v <= 0){ pkgOut.textContent = 'Enter an amount.'; return; }
+      const passid = 'TCOIN-' + crypto.getRandomValues(new Uint32Array(4)).join('');
+      pkgOut.textContent = `Created package for ${v} TCOIN — passid: ${passid}`;
+      pkgAmt.value = '';
+    });
+
+    redeemBtn.addEventListener('click', ()=>{
+      if (!redeemCode.value){ redeemMsg.textContent = 'Enter a passid.'; return; }
+      redeemMsg.textContent = `Redeemed ${redeemCode.value} (demo).`;
+      redeemCode.value = '';
+    });
+  })();
+  </script>
 </body>
 </html>
