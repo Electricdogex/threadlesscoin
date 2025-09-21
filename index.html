@@ -197,137 +197,190 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-  'use strict';
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
 
-  const TC = {
-    SUPABASE_URL:  'https://vgdskvrovkekoxkixzsh.supabase.co', // <-- yours
-    SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo',
-    sb: null,
-    me: { id:null, email:null, username:null, balance:0 }
-  };
+const TC = {
+  SUPABASE_URL:  'https://vgdskvrovkekoxkixzsh.supabase.co', // <-- your project URL
+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo',
+  sb: null,
+  me: { id:null, email:null, username:null, balance:0 }
+};
 
-  (function theme(){
-    const sel = document.getElementById('theme');
-    const t = localStorage.getItem('threadless_theme') || 'forest';
-    document.documentElement.setAttribute('data-theme', t);
-    sel.value = t;
-    sel.addEventListener('change', ()=>{ const v=sel.value; document.documentElement.setAttribute('data-theme', v); localStorage.setItem('threadless_theme', v); });
-  })();
+/* ===== Helpers ===== */
+const $ = id => document.getElementById(id);
+function setStatus(s){ const el=$('status'); if(el) el.textContent=s; }
+function showAuthUI(signedIn){ $('authArea').style.display = signedIn?'none':''; $('userArea').style.display = signedIn?'':''; }
+function renderAccount(){
+  $('userEmail').textContent = TC.me.email||'';
+  $('userName').textContent  = TC.me.username||'—';
+  $('balanceBadge').textContent = `Balance: ${Number(TC.me.balance||0).toFixed(4)} TCOIN`;
+  $('usernameEditRow').style.display = TC.me.username ? 'none' : '';
+}
 
-  const $ = id=>document.getElementById(id);
-  function setStatus(s){ $('status').textContent=s; }
-  function showAuthUI(on){ $('authArea').style.display=on?'none':''; $('userArea').style.display=on?'':''; }
-  function renderAccount(){
-    $('userEmail').textContent = TC.me.email||'';
-    $('userName').textContent  = TC.me.username||'—';
-    $('balanceBadge').textContent = `Balance: ${Number(TC.me.balance).toFixed(4)} TCOIN`;
-    $('usernameEditRow').style.display = TC.me.username ? 'none' : '';
+/* ===== Theme (unchanged) ===== */
+(function theme(){
+  const sel = $('theme');
+  const t = localStorage.getItem('threadless_theme') || 'forest';
+  document.documentElement.setAttribute('data-theme', t);
+  sel.value = t;
+  sel.addEventListener('change', ()=>{ const v=sel.value; document.documentElement.setAttribute('data-theme', v); localStorage.setItem('threadless_theme', v); });
+})();
+
+/* ===== Error surfaces so you see what’s wrong instead of “connecting…” ===== */
+window.addEventListener('error', (e)=>{ setStatus(`error: ${e.message||'script error'}`); });
+window.addEventListener('unhandledrejection', (e)=>{ setStatus(`error: ${e.reason?.message||e.reason||'promise'}`); });
+
+/* ===== Supabase helpers ===== */
+async function pingSupabase(){
+  try{
+    // light, cached SELECT to prove CSP/keys/domain are correct
+    const { error } = await TC.sb.from('profiles').select('id').limit(1);
+    if (error) { setStatus(`db error: ${error.message}`); return false; }
+    return true;
+  }catch(err){
+    setStatus(`db error: ${err?.message||err}`);
+    return false;
   }
+}
 
-  async function fetchProfile(){
-    const { data } = await TC.sb.from('profiles').select('id,email,username,balance').eq('id', TC.me.id).maybeSingle();
-    return data || null;
+async function fetchProfile(){
+  const { data, error } = await TC.sb
+    .from('profiles').select('id,email,username,balance').eq('id', TC.me.id).maybeSingle();
+  if (error) throw error;
+  return data || null;
+}
+async function ensureProfile(){
+  // auth trigger normally creates the row, but on first run it might lag
+  for (let i=0;i<4;i++){
+    const p = await fetchProfile(); if (p) return p;
+    await new Promise(r=>setTimeout(r, 300));
   }
-  async function ensureProfile(){
-    for (let i=0;i<3;i++){
-      const p = await fetchProfile(); if (p) return p;
-      await new Promise(r=>setTimeout(r, 400));
+  await TC.sb.from('profiles').upsert({ id: TC.me.id, email: TC.me.email });
+  return fetchProfile();
+}
+
+async function refreshUser(){
+  try{
+    // Fast path: local session
+    const { data:sessionData } = await TC.sb.auth.getSession();
+    if (sessionData?.session) {
+      TC.me.id = sessionData.session.user.id;
+      TC.me.email = sessionData.session.user.email || '';
+    } else {
+      // No session – we’re signed out
+      showAuthUI(false);
+      setStatus('signed out');
+      return;
     }
-    await TC.sb.from('profiles').upsert({ id: TC.me.id, email: TC.me.email });
-    return fetchProfile();
+
+    showAuthUI(true);
+    setStatus('online');
+
+    const p = await ensureProfile();
+    if (p){ TC.me.username = p.username; TC.me.balance = p.balance||0; }
+    renderAccount();
+  }catch(err){
+    setStatus(`auth error: ${err?.message||err}`);
   }
-  async function refreshUser(){
-    const { data:ud } = await TC.sb.auth.getUser();
-    if (ud?.user){
-      TC.me.id = ud.user.id; TC.me.email = ud.user.email || '';
-      setStatus('online'); showAuthUI(true);
-      const p = await ensureProfile(); if (p){ TC.me.username=p.username; TC.me.balance=p.balance||0; }
-      renderAccount();
-    } else { showAuthUI(false); setStatus('signed out'); }
+}
+
+/* ===== Wire UI (same features, safer status updates) ===== */
+function wireAuth(){
+  $('signInBtn').addEventListener('click', async ()=>{
+    const email = prompt('Enter your email for a magic sign-in link:'); if (!email) return;
+    const redirectTo = new URL('./auth.html', location.href).href;
+    const { error } = await TC.sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: redirectTo }});
+    alert(error ? ('Failed: '+(error.message||'error')) : 'Check your email for the link!');
+  });
+  $('signOutBtn').addEventListener('click', async ()=>{ await TC.sb.auth.signOut(); location.reload(); });
+  $('saveUserBtn').addEventListener('click', async ()=>{
+    const v = ($('usernameInput').value||'').trim().toLowerCase();
+    if (!/^[a-z0-9_]{3,20}$/.test(v)){ $('userMsg').textContent='3–20 chars: a-z, 0–9, _'; return; }
+    $('userMsg').textContent='saving…';
+    const { data, error } = await TC.sb.rpc('set_username', { p_username: v });
+    if (error){ $('userMsg').textContent = error.message || 'failed'; return; }
+    TC.me.username = data.username; $('userMsg').textContent='saved!'; renderAccount();
+  });
+  TC.sb.auth.onAuthStateChange(()=>refreshUser());
+}
+
+function wireMining(){
+  const mineBtn=$('mineBtn'), stopBtn=$('stopBtn'), bar=$('miningProgress'), label=$('progressLabel'), meta=$('mineMeta');
+  let running=false, solved=0, pending=0;
+  const update=()=>meta.textContent=`Solved: ${solved} • Pending: ${pending} • Rewarded: ${Number(TC.me.balance||0).toFixed(4)} TCOIN`;
+
+  async function reward(amt){
+    const { data, error } = await TC.sb.rpc('reward_mine', { p_amount: amt });
+    if (error) throw error;
+    TC.me.balance = data||TC.me.balance; renderAccount();
   }
-
-  function wireAuth(){
-    $('signInBtn').addEventListener('click', async ()=>{
-      const email = prompt('Enter your email for a magic sign-in link:'); if (!email) return;
-      const redirectTo = new URL('./auth.html', location.href).href;
-      const { error } = await TC.sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: redirectTo }});
-      alert(error ? ('Failed: '+(error.message||'error')) : 'Check your email for the link!');
-    });
-    $('signOutBtn').addEventListener('click', async ()=>{ await TC.sb.auth.signOut(); location.reload(); });
-    $('saveUserBtn').addEventListener('click', async ()=>{
-      const v = ($('usernameInput').value||'').trim().toLowerCase();
-      if (!/^[a-z0-9_]{3,20}$/.test(v)){ $('userMsg').textContent='3–20 chars: a-z, 0-9, _'; return; }
-      $('userMsg').textContent='saving…';
-      const { data, error } = await TC.sb.rpc('set_username', { p_username: v });
-      if (error){ $('userMsg').textContent = error.message || 'failed'; return; }
-      TC.me.username = data.username; $('userMsg').textContent='saved!'; renderAccount();
-    });
-    TC.sb.auth.onAuthStateChange(()=>refreshUser());
+  async function loop(){
+    running=true; bar.value=0; label.textContent='Working…'; pending++;
+    for (let i=0;i<=100 && running;i++){ bar.value=i; await new Promise(r=>setTimeout(r,35)); }
+    if (!running){ label.textContent='Stopped'; pending=Math.max(0,pending-1); update(); return; }
+    try{ await reward(0.1); solved++; label.textContent='Proof found! +0.1 TCOIN'; }
+    catch(e){ label.textContent='Reward failed: '+(e?.message||'error'); console.error(e); }
+    finally{ pending=Math.max(0,pending-1); update(); }
+    if (running) setTimeout(()=>loop(), 600);
   }
+  mineBtn.addEventListener('click', ()=>{ if(!TC.me.id){alert('Sign in first.');return;} if(running)return; running=true; mineBtn.disabled=true; stopBtn.disabled=false; update(); loop(); });
+  stopBtn.addEventListener('click', ()=>{ running=false; mineBtn.disabled=false; stopBtn.disabled=true; label.textContent='Idle'; });
+  update();
+}
 
-  function wireMining(){
-    const mineBtn=$('mineBtn'), stopBtn=$('stopBtn'), bar=$('miningProgress'), label=$('progressLabel'), meta=$('mineMeta');
-    let running=false, solved=0, pending=0;
-    function update(){ meta.textContent = `Solved: ${solved} • Pending: ${pending} • Rewarded: ${Number(TC.me.balance).toFixed(4)} TCOIN`; }
-    async function reward(amt){
-      const { data, error } = await TC.sb.rpc('reward_mine', { p_amount: amt });
-      if (error) throw error; TC.me.balance = data||TC.me.balance; renderAccount();
-    }
-    async function loop(){
-      running=true; bar.value=0; label.textContent='Working…'; pending++;
-      for (let i=0;i<=100 && running;i++){ bar.value=i; await new Promise(r=>setTimeout(r,35)); }
-      if (!running){ label.textContent='Stopped'; pending=Math.max(0,pending-1); update(); return; }
-      try{ await reward(0.1); solved++; label.textContent='Proof found! +0.1 TCOIN'; }
-      catch(e){ label.textContent='Reward failed: '+(e?.message||'error'); console.error(e); }
-      finally{ pending=Math.max(0,pending-1); update(); }
-      if (running) setTimeout(()=>loop(), 600);
-    }
-    mineBtn.addEventListener('click', ()=>{ if(!TC.me.id){alert('Sign in first.');return;} if(running)return; running=true; mineBtn.disabled=true; stopBtn.disabled=false; update(); loop(); });
-    stopBtn.addEventListener('click', ()=>{ running=false; mineBtn.disabled=false; stopBtn.disabled=true; label.textContent='Idle'; });
-    update();
-  }
+function wireWallet(){
+  const friend=$('friend'), amount=$('amount'), sendBtn=$('sendBtn'), sendMsg=$('sendMsg');
+  const pkgAmt=$('pkgAmt'), mkPkgBtn=$('mkPkgBtn'), pkgOut=$('pkgOut');
+  const redeemCode=$('redeemCode'), redeemBtn=$('redeemBtn'), redeemMsg=$('redeemMsg');
 
-  function wireWallet(){
-    const friend=$('friend'), amount=$('amount'), sendBtn=$('sendBtn'), sendMsg=$('sendMsg');
-    const pkgAmt=$('pkgAmt'), mkPkgBtn=$('mkPkgBtn'), pkgOut=$('pkgOut');
-    const redeemCode=$('redeemCode'), redeemBtn=$('redeemBtn'), redeemMsg=$('redeemMsg');
+  sendBtn.addEventListener('click', async ()=>{
+    if(!TC.me.id){alert('Sign in first.');return;}
+    const to=(friend.value||'').trim().toLowerCase(); const amt=Number(amount.value||0);
+    if(!to || !(amt>0)){ sendMsg.textContent='Enter friend username and amount.'; return; }
+    sendMsg.textContent='Sending…';
+    const { data, error } = await TC.sb.rpc('send_tcoin', { p_to_username: to, p_amount: amt });
+    if (error){ sendMsg.textContent = error.message || 'failed'; return; }
+    TC.me.balance = data||TC.me.balance; renderAccount(); sendMsg.textContent=`Sent ${amt} TCOIN to @${to}.`; amount.value='';
+  });
 
-    sendBtn.addEventListener('click', async ()=>{
-      if(!TC.me.id){alert('Sign in first.');return;}
-      const to=(friend.value||'').trim().toLowerCase(); const amt=Number(amount.value||0);
-      if(!to || !(amt>0)){ sendMsg.textContent='Enter friend username and amount.'; return; }
-      sendMsg.textContent='Sending…';
-      const { data, error } = await TC.sb.rpc('send_tcoin', { p_to_username: to, p_amount: amt });
-      if (error){ sendMsg.textContent = error.message || 'failed'; return; }
-      TC.me.balance = data||TC.me.balance; renderAccount(); sendMsg.textContent=`Sent ${amt} TCOIN to @${to}.`; amount.value='';
-    });
+  mkPkgBtn.addEventListener('click', async ()=>{
+    if(!TC.me.id){alert('Sign in first.');return;}
+    const v=Number(pkgAmt.value||0); if(!(v>0)){ pkgOut.textContent='Enter an amount.'; return; }
+    pkgOut.textContent='Creating…';
+    const { data, error } = await TC.sb.rpc('make_package', { p_amount: v });
+    if (error){ pkgOut.textContent = error.message || 'failed'; return; }
+    const row=(data&&data[0])||null;
+    if(row){ pkgOut.textContent=`Created package for ${row.amount} TCOIN — passid: ${row.code}`; pkgAmt.value=''; TC.me.balance -= v; renderAccount(); }
+    else{ pkgOut.textContent='Unexpected response.'; }
+  });
 
-    mkPkgBtn.addEventListener('click', async ()=>{
-      if(!TC.me.id){alert('Sign in first.');return;}
-      const v=Number(pkgAmt.value||0); if(!(v>0)){ pkgOut.textContent='Enter an amount.'; return; }
-      pkgOut.textContent='Creating…';
-      const { data, error } = await TC.sb.rpc('make_package', { p_amount: v });
-      if (error){ pkgOut.textContent = error.message || 'failed'; return; }
-      const row=(data&&data[0])||null;
-      if(row){ pkgOut.textContent=`Created package for ${row.amount} TCOIN — passid: ${row.code}`; pkgAmt.value=''; TC.me.balance -= v; renderAccount(); }
-      else{ pkgOut.textContent='Unexpected response.'; }
-    });
+  redeemBtn.addEventListener('click', async ()=>{
+    if(!TC.me.id){alert('Sign in first.');return;}
+    const code=(redeemCode.value||'').trim(); if(!code){ redeemMsg.textContent='Enter a passid.'; return; }
+    redeemMsg.textContent='Redeeming…';
+    const { data, error } = await TC.sb.rpc('redeem_package', { p_code: code });
+    if (error){ redeemMsg.textContent = error.message || 'failed'; return; }
+    TC.me.balance = data||TC.me.balance; renderAccount(); redeemMsg.textContent='Redeemed!'; redeemCode.value='';
+  });
+}
 
-    redeemBtn.addEventListener('click', async ()=>{
-      if(!TC.me.id){alert('Sign in first.');return;}
-      const code=(redeemCode.value||'').trim(); if(!code){ redeemMsg.textContent='Enter a passid.'; return; }
-      redeemMsg.textContent='Redeeming…';
-      const { data, error } = await TC.sb.rpc('redeem_package', { p_code: code });
-      if (error){ redeemMsg.textContent = error.message || 'failed'; return; }
-      TC.me.balance = data||TC.me.balance; renderAccount(); redeemMsg.textContent='Redeemed!'; redeemCode.value='';
-    });
-  }
-
-  (function boot(){
+/* ===== Boot with explicit probe ===== */
+(async function boot(){
+  try{
+    setStatus('connecting…');
     TC.sb = supabase.createClient(TC.SUPABASE_URL, TC.SUPABASE_ANON);
-    wireAuth(); wireMining(); wireWallet(); refreshUser();
-  })();
-  </script>
+    wireAuth(); wireMining(); wireWallet();
+
+    const ok = await pingSupabase();
+    if (!ok) return; // status already set to error by ping
+
+    await refreshUser(); // will set 'online' or 'signed out'
+  }catch(err){
+    setStatus(`boot error: ${err?.message||err}`);
+  }
+})();
+</script>
 </body>
 </html>
