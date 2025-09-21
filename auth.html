@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ThreadlessCoin · Auth</title>
-
+<title>ThreadlessCoin · Signed in</title>
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   base-uri 'none';
@@ -13,61 +12,44 @@
   script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
   upgrade-insecure-requests;">
-
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
-
 <style>
-:root{
-  --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27;
-  --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d;
-  --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-}
-body{
-  margin:0; height:100dvh; display:grid; place-items:center;
-  background: var(--bg); color:var(--ink); font:16px/1.5 var(--font);
-}
-.box{
-  max-width:520px; padding:24px; border-radius:16px; border:1px solid var(--line);
-  background:linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 55%), var(--card);
-  text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.35);
-}
-h1{margin:0 0 8px}
-p{color:var(--muted); margin:0 0 16px}
-.btn{border:0; border-radius:12px; padding:10px 16px; font-weight:800; cursor:pointer;
-  background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%));
-  color:#28150a;
-}
-small{display:block; color:var(--muted); margin-top:10px}
+:root{ --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27; --accent:#ff8b3d; --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+body{ margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 var(--font); display:grid; place-items:center; height:100vh }
+.box{ background:var(--card); border:1px solid var(--line); padding:24px; border-radius:16px; max-width:520px }
+h1{ margin:0 0 6px }
+.meta{ color:var(--muted); font-size:13px }
+.btn{ margin-top:12px; border:0; border-radius:12px; padding:10px 14px; background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%)); color:#28150a; font-weight:800; cursor:pointer; }
 </style>
 </head>
 <body>
   <div class="box">
-    <h1>Success! Account made 🎉</h1>
-    <p>You’re signed in. Let’s head back to ThreadlessCoin.</p>
-    <button id="go" class="btn">Continue</button>
-    <small id="who"></small>
+    <h1>Success! Account made ✅</h1>
+    <div id="email" class="meta"></div>
+    <div class="meta" style="margin-top:8px">You’re signed in. Taking you back…</div>
+    <button id="go" class="btn">Go to ThreadlessCoin</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  const SUPABASE_URL  = 'https://vgdskvrovkekoxkixzsh.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo';
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  (async function(){
+    const SUPABASE_URL  = "https://vgdskvrovkekoxkixzsh.supabase.co";  // <-- update
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo";                      // <-- update
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-  // Show who we are (if available)
-  (async ()=>{
-    // new session should already be set by the magic link before redirecting here
-    const { data } = await sb.auth.getUser();
-    if (data?.user?.email){
-      document.getElementById('who').textContent = 'Signed in as ' + data.user.email;
-    }
+    // This call parses the URL fragment from the magic link and stores the session.
+    await sb.auth.getSession();
+
+    const u = await sb.auth.getUser();
+    const emailEl = document.getElementById('email');
+    if (u.data?.user?.email){ emailEl.textContent = u.data.user.email; }
+
+    const back = ()=>location.replace('./index.html');
+    document.getElementById('go').addEventListener('click', back);
+
+    // Clean up the hash and go back after a short pause
+    setTimeout(back, 900);
   })();
-
-  document.getElementById('go').addEventListener('click', ()=>{
-    // return to index.html (same folder)
-    const back = new URL('./', location.href).href;
-    location.href = back;
-  });
   </script>
 </body>
 </html>
