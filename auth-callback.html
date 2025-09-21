@@ -6,41 +6,31 @@
 <title>ThreadlessCoin · Auth</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
-:root{ --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27; --accent:#ff8b3d; --font: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif }
-[data-theme="forest"]{}
+:root{--bg:#0e1613;--card:#122019;--ink:#e9f5ee;--line:#1e2e27;--accent:#ff8b3d;--accent-2:#1f9d68;--accent-2-ink:#06120d;--font:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font);display:grid;place-items:center;min-height:100vh}
-.card{max-width:620px;width:92%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
-h1{margin:0 0 6px}
-.meta{color:var(--muted);font-size:13px}
+.card{max-width:560px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+h1{margin:0 0 8px}
 .btn{display:inline-block;margin-top:12px;border:0;border-radius:12px;padding:10px 14px;background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 75%,#000 25%));color:#28150a;font-weight:800;text-decoration:none}
+.meta{color:#9db7ab;font-size:13px}
 </style>
 </head>
 <body>
   <div class="card">
     <h1 id="title">Success! Account made 🎉</h1>
-    <div id="desc" class="meta">You can close this tab or go back to ThreadlessCoin.</div>
-    <a class="btn" id="homeLink" href="./">Open ThreadlessCoin</a>
+    <div class="meta" id="desc">You can close this tab and go back to ThreadlessCoin.</div>
+    <a class="btn" id="back" href="./">Back to app</a>
   </div>
 
-<script>
-(function(){
-  // Keep theme consistent with index.html
-  const stored = localStorage.getItem('threadless_theme') || 'forest';
-  document.documentElement.setAttribute('data-theme', stored);
-
-  // Supabase sometimes puts error params in the hash (like your screenshot)
-  const params = new URLSearchParams(location.hash.slice(1));
-  const error = params.get('error');
-  const errDesc = params.get('error_description');
-
-  if (error){
-    document.getElementById('title').textContent = 'Sign-in link expired or invalid';
-    document.getElementById('desc').textContent  = errDesc || 'Please request a new link and try again.';
-  } else {
-    // No known error in hash → show success
-    document.getElementById('title').textContent = 'Success! Account made 🎉';
+  <script>
+  // Show an error if the redirect has an error fragment
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const err  = hash.get('error') || hash.get('error_description');
+  if (err){
+    document.getElementById('title').textContent = 'Sign-in error';
+    document.getElementById('desc').textContent  = err;
   }
-})();
-</script>
+  // If we arrived with a path like /threadlesscoin/auth.html?redirectedFrom=... keep link pointing to the app root.
+  document.getElementById('back').href = new URL('./', location.href).href;
+  </script>
 </body>
 </html>
