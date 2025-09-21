@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ThreadlessCoin</title>
 
-<!-- CSP (GitHub Pages-safe) -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   base-uri 'none';
@@ -15,20 +14,16 @@
   script-src 'self' https://cdn.jsdelivr.net https://cdn.skypack.dev 'unsafe-inline';
   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
   upgrade-insecure-requests;">
-
-<!-- Referrer/robots -->
 <meta http-equiv="Referrer-Policy" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 
-<!-- Favicon: ThreadlessCoin (threadless bars with a coin ring) -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs/%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 
 <style>
-/* ========= THEME TOKENS (Threadless style, limited set) ========= */
 :root{
   --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27;
   --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d; --warn:#ffd08f;
-  --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 }
 [data-theme="forest"]{ --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27; --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d; --warn:#ffd08f }
 [data-theme="sunset"]{ --bg:#160f12; --card:#22161b; --ink:#ffeef3; --muted:#c5a7b3; --line:#2d1e25; --accent:#ff6b6b; --accent-2:#ffb86b; --accent-2-ink:#2b130f; --warn:#ffe0b5 }
@@ -37,7 +32,6 @@
 [data-theme="grape"]{ --bg:#160d1a; --card:#231128; --ink:#f6e9ff; --muted:#c7abd8; --line:#31153b; --accent:#c47dff; --accent-2:#ff9fb3; --accent-2-ink:#2b0c18; --warn:#ffe0c1 }
 [data-theme="mono"]{ --bg:#0c0c0c; --card:#141414; --ink:#f5f5f5; --muted:#bcbcbc; --line:#202020; --accent:#ffffff; --accent-2:#d0d0d0; --accent-2-ink:#121212; --warn:#ffd08f }
 
-/* ========= Base layout (Threadless look) ========= */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -55,24 +49,11 @@ h1{margin:0 0 4px; font-size:22px; letter-spacing:.2px}
 .sub{color:var(--muted);font-size:13px}
 .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .brand{display:flex; align-items:center; gap:12px}
-
-/* ThreadlessCoin logo (threadless bars + coin ring) */
 .logo{ width:32px;height:32px;border-radius:10px;background:var(--bg);border:1px solid var(--line); display:grid; place-items:center; position:relative }
-.logo::before{
-  content:''; position:absolute; inset:2px; border-radius:10px;
-  border:2px solid var(--accent); opacity:.9;
-}
-.logo::after{
-  content:''; display:block; width:24px; height:6px; border-radius:6px; background:var(--accent);
-  box-shadow:0 12px 0 var(--accent), 0 24px 0 var(--accent); transform:translateY(-6px);
-}
+.logo::before{ content:''; position:absolute; inset:2px; border-radius:10px; border:2px solid var(--accent); opacity:.9 }
+.logo::after{ content:''; display:block; width:24px; height:6px; border-radius:6px; background:var(--accent); box-shadow:0 12px 0 var(--accent), 0 24px 0 var(--accent); transform:translateY(-6px) }
 
-/* Buttons/inputs */
-.btn{ border:0; border-radius:12px; padding:10px 14px;
-  background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%));
-  color: var(--btn-ink, #28150a); font-weight:800; cursor:pointer;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.15)
-}
+.btn{ border:0; border-radius:12px; padding:10px 14px; background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%)); color: #28150a; font-weight:800; cursor:pointer; box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.15) }
 .btn[disabled]{opacity:.55; cursor:not-allowed}
 
 .theme-switch{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px }
@@ -81,7 +62,21 @@ h1{margin:0 0 4px; font-size:22px; letter-spacing:.2px}
 .card{ margin:16px 0; padding:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
 .meta{color:var(--muted); font-size:12px}
 
-footer{color:var(--muted); font-size:12px; margin:36px 0; text-align:center}
+.balance-badge{
+  display:inline-flex; align-items:center; gap:8px;
+  font: 800 18px/1 var(--font);
+  color: var(--accent-2-ink);
+  background: linear-gradient(180deg, var(--accent-2), color-mix(in srgb, var(--accent-2) 75%, #000 0%));
+  border:1px solid color-mix(in srgb, var(--accent-2) 65%, black);
+  border-radius: 999px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-2) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.username-row{ display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap }
+.username-input{
+  padding:10px; border-radius:10px; border:1px solid var(--line);
+  background:var(--card); color:var(--ink); min-width:220px;
+}
 
 /* Mining progress */
 .progress-wrap{ margin-top:12px }
@@ -90,7 +85,6 @@ progress::-webkit-progress-bar{ background: color-mix(in srgb, var(--bg) 90%, bl
 progress::-webkit-progress-value{ background: var(--accent); border-radius:12px }
 progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
 
-/* Small responsive tweak */
 @media (max-width: 720px){ .wrap{ padding:12px; } .topbar{ flex-wrap:wrap } }
 </style>
 </head>
@@ -128,13 +122,30 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
     <!-- Account -->
     <section class="card">
       <h2 style="margin:0 0 8px">Account</h2>
+
       <div id="authArea">
         <button class="btn" id="signInBtn">Sign in / Sign up via email</button>
         <span class="meta">We’ll send a magic link.</span>
       </div>
+
       <div id="userArea" style="display:none">
-        <div class="meta" id="userEmail"></div>
-        <button class="btn" id="signOutBtn">Sign out</button>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap">
+          <div>
+            <div class="meta" id="userEmail">you@example.com</div>
+            <div class="meta" id="userNameLine">username: <strong id="userName">—</strong></div>
+          </div>
+          <div class="balance-badge" id="balanceBadge">Balance: 0 TCOIN</div>
+        </div>
+
+        <div class="username-row" id="usernameEditRow" style="display:none">
+          <input id="usernameInput" class="username-input" placeholder="pick a username (a–z, 0–9, _)" />
+          <button class="btn" id="saveUserBtn">Save username</button>
+          <span class="meta" id="userMsg"></span>
+        </div>
+
+        <div style="margin-top:10px">
+          <button class="btn" id="signOutBtn">Sign out</button>
+        </div>
       </div>
     </section>
 
@@ -182,171 +193,140 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
       <div class="meta" id="redeemMsg" style="margin-top:8px"></div>
     </section>
 
-    <footer>
-      <div>© 2025 ThreadlessCoin (demo)</div>
-    </footer>
+    <footer><div>© 2025 ThreadlessCoin (demo)</div></footer>
   </main>
 
-  <!-- Supabase client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
   'use strict';
 
-  /* ========= CONFIG ========= */
   const TC = {
-    SUPABASE_URL:  'https://vgdskvrovkekoxkixzsh.supabase.co', // <-- put yours
-    SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo',                     // <-- put yours
+    SUPABASE_URL:  'https://vgdskvrovkekoxkixzsh.supabase.co', // <-- yours
+    SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo',
     sb: null,
+    me: { id:null, email:null, username:null, balance:0 }
   };
 
-  /* ========= THEME (same as Threadless) ========= */
-  (function setupTheme(){
+  (function theme(){
     const sel = document.getElementById('theme');
-    const stored = localStorage.getItem('threadless_theme') || 'forest';
-    document.documentElement.setAttribute('data-theme', stored);
-    sel.value = stored;
-    sel.addEventListener('change', ()=>{
-      const v = sel.value;
-      document.documentElement.setAttribute('data-theme', v);
-      localStorage.setItem('threadless_theme', v);
-    });
+    const t = localStorage.getItem('threadless_theme') || 'forest';
+    document.documentElement.setAttribute('data-theme', t);
+    sel.value = t;
+    sel.addEventListener('change', ()=>{ const v=sel.value; document.documentElement.setAttribute('data-theme', v); localStorage.setItem('threadless_theme', v); });
   })();
 
-  /* ========= SUPABASE + AUTH UI ========= */
+  const $ = id=>document.getElementById(id);
+  function setStatus(s){ $('status').textContent=s; }
+  function showAuthUI(on){ $('authArea').style.display=on?'none':''; $('userArea').style.display=on?'':''; }
+  function renderAccount(){
+    $('userEmail').textContent = TC.me.email||'';
+    $('userName').textContent  = TC.me.username||'—';
+    $('balanceBadge').textContent = `Balance: ${Number(TC.me.balance).toFixed(4)} TCOIN`;
+    $('usernameEditRow').style.display = TC.me.username ? 'none' : '';
+  }
+
+  async function fetchProfile(){
+    const { data } = await TC.sb.from('profiles').select('id,email,username,balance').eq('id', TC.me.id).maybeSingle();
+    return data || null;
+  }
+  async function ensureProfile(){
+    for (let i=0;i<3;i++){
+      const p = await fetchProfile(); if (p) return p;
+      await new Promise(r=>setTimeout(r, 400));
+    }
+    await TC.sb.from('profiles').upsert({ id: TC.me.id, email: TC.me.email });
+    return fetchProfile();
+  }
+  async function refreshUser(){
+    const { data:ud } = await TC.sb.auth.getUser();
+    if (ud?.user){
+      TC.me.id = ud.user.id; TC.me.email = ud.user.email || '';
+      setStatus('online'); showAuthUI(true);
+      const p = await ensureProfile(); if (p){ TC.me.username=p.username; TC.me.balance=p.balance||0; }
+      renderAccount();
+    } else { showAuthUI(false); setStatus('signed out'); }
+  }
+
+  function wireAuth(){
+    $('signInBtn').addEventListener('click', async ()=>{
+      const email = prompt('Enter your email for a magic sign-in link:'); if (!email) return;
+      const redirectTo = new URL('./auth.html', location.href).href;
+      const { error } = await TC.sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: redirectTo }});
+      alert(error ? ('Failed: '+(error.message||'error')) : 'Check your email for the link!');
+    });
+    $('signOutBtn').addEventListener('click', async ()=>{ await TC.sb.auth.signOut(); location.reload(); });
+    $('saveUserBtn').addEventListener('click', async ()=>{
+      const v = ($('usernameInput').value||'').trim().toLowerCase();
+      if (!/^[a-z0-9_]{3,20}$/.test(v)){ $('userMsg').textContent='3–20 chars: a-z, 0-9, _'; return; }
+      $('userMsg').textContent='saving…';
+      const { data, error } = await TC.sb.rpc('set_username', { p_username: v });
+      if (error){ $('userMsg').textContent = error.message || 'failed'; return; }
+      TC.me.username = data.username; $('userMsg').textContent='saved!'; renderAccount();
+    });
+    TC.sb.auth.onAuthStateChange(()=>refreshUser());
+  }
+
+  function wireMining(){
+    const mineBtn=$('mineBtn'), stopBtn=$('stopBtn'), bar=$('miningProgress'), label=$('progressLabel'), meta=$('mineMeta');
+    let running=false, solved=0, pending=0;
+    function update(){ meta.textContent = `Solved: ${solved} • Pending: ${pending} • Rewarded: ${Number(TC.me.balance).toFixed(4)} TCOIN`; }
+    async function reward(amt){
+      const { data, error } = await TC.sb.rpc('reward_mine', { p_amount: amt });
+      if (error) throw error; TC.me.balance = data||TC.me.balance; renderAccount();
+    }
+    async function loop(){
+      running=true; bar.value=0; label.textContent='Working…'; pending++;
+      for (let i=0;i<=100 && running;i++){ bar.value=i; await new Promise(r=>setTimeout(r,35)); }
+      if (!running){ label.textContent='Stopped'; pending=Math.max(0,pending-1); update(); return; }
+      try{ await reward(0.1); solved++; label.textContent='Proof found! +0.1 TCOIN'; }
+      catch(e){ label.textContent='Reward failed: '+(e?.message||'error'); console.error(e); }
+      finally{ pending=Math.max(0,pending-1); update(); }
+      if (running) setTimeout(()=>loop(), 600);
+    }
+    mineBtn.addEventListener('click', ()=>{ if(!TC.me.id){alert('Sign in first.');return;} if(running)return; running=true; mineBtn.disabled=true; stopBtn.disabled=false; update(); loop(); });
+    stopBtn.addEventListener('click', ()=>{ running=false; mineBtn.disabled=false; stopBtn.disabled=true; label.textContent='Idle'; });
+    update();
+  }
+
+  function wireWallet(){
+    const friend=$('friend'), amount=$('amount'), sendBtn=$('sendBtn'), sendMsg=$('sendMsg');
+    const pkgAmt=$('pkgAmt'), mkPkgBtn=$('mkPkgBtn'), pkgOut=$('pkgOut');
+    const redeemCode=$('redeemCode'), redeemBtn=$('redeemBtn'), redeemMsg=$('redeemMsg');
+
+    sendBtn.addEventListener('click', async ()=>{
+      if(!TC.me.id){alert('Sign in first.');return;}
+      const to=(friend.value||'').trim().toLowerCase(); const amt=Number(amount.value||0);
+      if(!to || !(amt>0)){ sendMsg.textContent='Enter friend username and amount.'; return; }
+      sendMsg.textContent='Sending…';
+      const { data, error } = await TC.sb.rpc('send_tcoin', { p_to_username: to, p_amount: amt });
+      if (error){ sendMsg.textContent = error.message || 'failed'; return; }
+      TC.me.balance = data||TC.me.balance; renderAccount(); sendMsg.textContent=`Sent ${amt} TCOIN to @${to}.`; amount.value='';
+    });
+
+    mkPkgBtn.addEventListener('click', async ()=>{
+      if(!TC.me.id){alert('Sign in first.');return;}
+      const v=Number(pkgAmt.value||0); if(!(v>0)){ pkgOut.textContent='Enter an amount.'; return; }
+      pkgOut.textContent='Creating…';
+      const { data, error } = await TC.sb.rpc('make_package', { p_amount: v });
+      if (error){ pkgOut.textContent = error.message || 'failed'; return; }
+      const row=(data&&data[0])||null;
+      if(row){ pkgOut.textContent=`Created package for ${row.amount} TCOIN — passid: ${row.code}`; pkgAmt.value=''; TC.me.balance -= v; renderAccount(); }
+      else{ pkgOut.textContent='Unexpected response.'; }
+    });
+
+    redeemBtn.addEventListener('click', async ()=>{
+      if(!TC.me.id){alert('Sign in first.');return;}
+      const code=(redeemCode.value||'').trim(); if(!code){ redeemMsg.textContent='Enter a passid.'; return; }
+      redeemMsg.textContent='Redeeming…';
+      const { data, error } = await TC.sb.rpc('redeem_package', { p_code: code });
+      if (error){ redeemMsg.textContent = error.message || 'failed'; return; }
+      TC.me.balance = data||TC.me.balance; renderAccount(); redeemMsg.textContent='Redeemed!'; redeemCode.value='';
+    });
+  }
+
   (function boot(){
     TC.sb = supabase.createClient(TC.SUPABASE_URL, TC.SUPABASE_ANON);
-    const signInBtn  = document.getElementById('signInBtn');
-    const signOutBtn = document.getElementById('signOutBtn');
-    const userArea   = document.getElementById('userArea');
-    const authArea   = document.getElementById('authArea');
-    const userEmail  = document.getElementById('userEmail');
-    const status     = document.getElementById('status');
-
-    function setStatus(s){ status.textContent = s; }
-
-    async function refreshUser(){
-      const { data } = await TC.sb.auth.getUser();
-      if (data?.user){
-        authArea.style.display = 'none';
-        userArea.style.display = '';
-        userEmail.textContent = data.user.email;
-        setStatus('online');
-      } else {
-        authArea.style.display = '';
-        userArea.style.display = 'none';
-        setStatus('signed out');
-      }
-    }
-
-    signInBtn.addEventListener('click', async ()=>{
-      const email = prompt('Enter your email for a magic sign-in link:');
-      if (!email) return;
-      // Important: set redirect to the pretty success page
-      const redirectTo = new URL('./auth.html', location.href).href;
-      const { error } = await TC.sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo }});
-      alert(error ? ('Failed: ' + (error.message||'error')) : 'Check your email for the link!');
-    });
-
-    signOutBtn.addEventListener('click', async ()=>{
-      await TC.sb.auth.signOut();
-      refreshUser();
-    });
-
-    refreshUser();
-  })();
-
-  /* ========= MINING (with progress bar) ========= */
-  (function mining(){
-    const mineBtn = document.getElementById('mineBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const bar     = document.getElementById('miningProgress');
-    const label   = document.getElementById('progressLabel');
-    const meta    = document.getElementById('mineMeta');
-
-    let running = false;
-    let solved = 0, pending = 0, rewarded = 0;
-
-    function updateMeta(){ meta.textContent = `Solved: ${solved} • Pending: ${pending} • Rewarded: ${rewarded} TCOIN`; }
-
-    // Tiny fake “puzzle”: find a hash with N leading zeros (simulated)
-    async function mineLoop(){
-      running = true;
-      bar.value = 0;
-      label.textContent = 'Working…';
-      pending++;
-
-      // Simulate incremental work so the bar moves smoothly
-      for (let i=0; i<=100 && running; i++){
-        bar.value = i;
-        await new Promise(r=>setTimeout(r, 40)); // ~4s per job
-      }
-      if (!running) { label.textContent = 'Stopped'; pending=Math.max(0,pending-1); updateMeta(); return; }
-
-      // “Solved”
-      solved++; pending=Math.max(0,pending-1); rewarded += 0.1; // demo reward
-      updateMeta();
-      label.textContent = 'Proof found! Reward +0.1';
-      bar.value = 100;
-
-      // Auto-queue another job if still running
-      if (running) setTimeout(()=>mineLoop(), 600);
-    }
-
-    mineBtn.addEventListener('click', ()=>{
-      if (running) return;
-      running = true;
-      mineBtn.disabled = true;
-      stopBtn.disabled = false;
-      updateMeta();
-      mineLoop();
-    });
-
-    stopBtn.addEventListener('click', ()=>{
-      running = false;
-      mineBtn.disabled = false;
-      stopBtn.disabled = true;
-      label.textContent = 'Idle';
-    });
-
-    updateMeta();
-  })();
-
-  /* ========= SEND / RECEIVE / PACKAGES (demo wire-up) ========= */
-  (function wallet(){
-    const friend = document.getElementById('friend');
-    const amount = document.getElementById('amount');
-    const sendBtn= document.getElementById('sendBtn');
-    const sendMsg= document.getElementById('sendMsg');
-
-    const pkgAmt = document.getElementById('pkgAmt');
-    const mkPkgBtn= document.getElementById('mkPkgBtn');
-    const pkgOut  = document.getElementById('pkgOut');
-
-    const redeemCode = document.getElementById('redeemCode');
-    const redeemBtn  = document.getElementById('redeemBtn');
-    const redeemMsg  = document.getElementById('redeemMsg');
-
-    // NOTE: These are placeholders; wire to your Supabase tables/functions if desired.
-    sendBtn.addEventListener('click', ()=>{
-      if (!friend.value || !amount.value) return (sendMsg.textContent = 'Enter friend and amount.');
-      sendMsg.textContent = `Sent ${amount.value} TCOIN to @${friend.value} (demo).`;
-      amount.value = '';
-    });
-
-    mkPkgBtn.addEventListener('click', ()=>{
-      const v = Number(pkgAmt.value||0);
-      if (v <= 0){ pkgOut.textContent = 'Enter an amount.'; return; }
-      const passid = 'TCOIN-' + crypto.getRandomValues(new Uint32Array(4)).join('');
-      pkgOut.textContent = `Created package for ${v} TCOIN — passid: ${passid}`;
-      pkgAmt.value = '';
-    });
-
-    redeemBtn.addEventListener('click', ()=>{
-      if (!redeemCode.value){ redeemMsg.textContent = 'Enter a passid.'; return; }
-      redeemMsg.textContent = `Redeemed ${redeemCode.value} (demo).`;
-      redeemCode.value = '';
-    });
+    wireAuth(); wireMining(); wireWallet(); refreshUser();
   })();
   </script>
 </body>
