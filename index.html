@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" data-theme="forest">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ThreadlessCoin · ALPHA</title>
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    base-uri 'none';
+    img-src 'self' data:;
+    style-src 'self' 'unsafe-inline';
+    script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+    upgrade-insecure-requests;">
+  <!-- paste your theme CSS from Threadless here to keep the look -->
+  <style>
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui}
+    .wrap{max-width:880px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    input,button,select{border-radius:10px;border:1px solid var(--line);padding:8px 10px;background:color-mix(in srgb,var(--bg) 92%,black 8%);color:var(--ink)}
+    button{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 75%,#000 25%));border:0;color:var(--btn-ink,#28150a);font-weight:800;cursor:pointer}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="env.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main class="wrap">
+    <h1>ThreadlessCoin</h1>
+    <div class="card" id="auth">
+      <h3>Sign in</h3>
+      <div class="row">
+        <input id="email" placeholder="email" type="email">
+        <input id="password" placeholder="password" type="password">
+        <button id="loginBtn">Login</button>
+        <button id="signupBtn">Sign up</button>
+      </div>
+    </div>
+
+    <div class="card" id="profile" style="display:none">
+      <h3>Profile</h3>
+      <div class="row">
+        <input id="username" placeholder="username (3–20)">
+        <button id="saveUserBtn">Save username</button>
+        <span id="meUser"></span>
+      </div>
+    </div>
+
+    <div class="card" id="wallet" style="display:none">
+      <h3>Wallet</h3>
+      <div class="row">Balance: <strong id="balance">0</strong> TLC</div>
+      <div class="row">
+        <input id="toUser" placeholder="send to @username">
+        <input id="amt" type="number" min="1" step="1" placeholder="amount">
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+
+    <div class="card" id="mining" style="display:none">
+      <h3>Mining</h3>
+      <div class="row">
+        <select id="difficulty">
+          <option value="3">Easy (3)</option>
+          <option value="4" selected>Normal (4)</option>
+          <option value="5">Hard (5)</option>
+        </select>
+        <button id="issueBtn">Get challenge</button>
+        <button id="mineBtn" disabled>Start mining</button>
+        <span id="hashrate"></span>
+      </div>
+      <pre id="challengeView"></pre>
+    </div>
+
+    <div class="card" id="friends" style="display:none">
+      <h3>Friends</h3>
+      <div class="row">
+        <input id="friendUser" placeholder="add @username">
+        <button id="addFriendBtn">Add</button>
+      </div>
+      <ul id="friendList"></ul>
+    </div>
+
+    <div class="card" id="packages" style="display:none">
+      <h3>Packages</h3>
+      <div class="row">
+        <input id="pkgAmt" type="number" min="1" step="1" placeholder="amount">
+        <button id="mkPkgBtn">Create package</button>
+      </div>
+      <div id="pkgOut"></div>
+      <div class="row" style="margin-top:8px">
+        <input id="redeemCode" placeholder="paste passID">
+        <button id="redeemBtn">Redeem</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
