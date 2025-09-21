@@ -19,11 +19,10 @@
 <meta http-equiv="Referrer-Policy" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 
-<!-- Favicon: ThreadlessCoin (bars + coin ring) -->
+<!-- Favicon: threadless bars with a coin ring -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1613'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23ff8b3d' stroke-width='4'/%3E%3Cpath d='M20 22h24M20 32h24M20 42h24' stroke='%23ff8b3d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 
 <style>
-/* ============ THEME TOKENS (Threadless core set) ============ */
 :root{
   --bg:#0e1613; --card:#122019; --ink:#e9f5ee; --muted:#9db7ab; --line:#1e2e27;
   --accent:#ff8b3d; --accent-2:#1f9d68; --accent-2-ink:#06120d; --warn:#ffd08f;
@@ -34,9 +33,8 @@
 [data-theme="midnight"]{ --bg:#0d0f19; --card:#121427; --ink:#e9ebff; --muted:#a9b0d4; --line:#1a1d36; --accent:#8ab4ff; --accent-2:#6ae6c1; --accent-2-ink:#021410; --warn:#ffd9a3 }
 [data-theme="ocean"]{ --bg:#07171d; --card:#0d2330; --ink:#e6fbff; --muted:#a6c9d6; --line:#143244; --accent:#26b0ff; --accent-2:#15d1b2; --accent-2-ink:#01221c; --warn:#ffe6b8 }
 [data-theme="grape"]{ --bg:#160d1a; --card:#231128; --ink:#f6e9ff; --muted:#c7abd8; --line:#31153b; --accent:#c47dff; --accent-2:#ff9fb3; --accent-2-ink:#2b0c18; --warn:#ffe0c1 }
-[data-theme="mono"]{ --bg:#0c0c0c; --card:#141414; --ink:#f5f5f5; --muted:#bcbcbc; --line:#202020; --accent:#ffffff; --accent-2:#d0d0d0; --accent-2-ink:#121212; --warn:#ffd08f }
+[data-theme="mono"]{ --bg:#0c0c0c; --card:#141414; --ink:#f5f5f5; --muted:#bcbcbc; --line:#202020; --accent:#ffffff; --accent-2:#d0d0d0; --accent-2-ink:#121212 }
 
-/* ============ Base look ============ */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -51,459 +49,261 @@ body{
 header{
   position:sticky; top:0; z-index:3;
   background:linear-gradient(180deg, color-mix(in srgb, var(--card) 85%, transparent), transparent);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  border-bottom:1px solid var(--line)
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-bottom:1px solid var(--line);
 }
-.wrap{max-width:980px;margin:0 auto;padding:16px}
-h1{margin:0 0 4px; font-size:22px; letter-spacing:.2px}
-.sub{color:var(--muted);font-size:13px}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
 .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .brand{display:flex; align-items:center; gap:12px}
-
-/* Logo (threadless bars + coin ring) */
-.logo{ width:32px;height:32px;border-radius:10px;background:var(--bg);border:1px solid var(--line); display:grid; place-items:center; position:relative }
-.logo::before{ content:''; position:absolute; inset:2px; border-radius:10px; border:2px solid var(--accent); opacity:.9; }
-.logo::after{ content:''; display:block; width:24px; height:6px; border-radius:6px; background:var(--accent);
-  box-shadow:0 12px 0 var(--accent), 0 24px 0 var(--accent); transform:translateY(-6px); }
-
-/* Controls */
+h1{margin:0 0 4px; font-size:22px}
+.sub{color:var(--muted); font-size:13px}
 .theme-switch{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px }
 .theme-select{ appearance:none; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px; padding:6px 10px; cursor:pointer }
-.btn{ border:0; border-radius:12px; padding:10px 14px;
-  background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%));
-  color: var(--btn-ink, #28150a); font-weight:800; cursor:pointer;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.15)
-}
-.btn[disabled]{opacity:.55; cursor:not-allowed}
-.input{padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-
 .card{ margin:16px 0; padding:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
+.btn{ border:0; border-radius:12px; padding:10px 14px; background:linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 75%, #000 25%)); color:#28150a; font-weight:800; cursor:pointer; box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.15) }
+.btn[disabled]{opacity:.55; cursor:not-allowed}
 .meta{color:var(--muted); font-size:12px}
 
-/* Identity row */
-.identity{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
-.big-balance{
-  font-weight:800; font-size:28px; letter-spacing:.2px;
-  padding:8px 12px; border-radius:12px; border:1px solid var(--line);
-  background:linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent);
-}
-.badge{font-weight:700; color:var(--accent);}
+.logo{ width:32px;height:32px;border-radius:10px;background:var(--bg);border:1px solid var(--line); display:grid; place-items:center; position:relative }
+.logo::before{ content:''; position:absolute; inset:2px; border-radius:10px; border:2px solid var(--accent); opacity:.9; }
+.logo::after{ content:''; width:24px; height:6px; border-radius:6px; background:var(--accent); box-shadow:0 12px 0 var(--accent), 0 24px 0 var(--accent); transform:translateY(-6px) }
 
-/* Mining progress */
 .progress-wrap{ margin-top:12px }
-progress{ width:100%; height:20px; -webkit-appearance: none; appearance: none; }
+progress{ width:100%; height:20px; -webkit-appearance:none; appearance:none }
 progress::-webkit-progress-bar{ background: color-mix(in srgb, var(--bg) 90%, black 10%); border:1px solid color-mix(in srgb, var(--line) 75%, black 25%); border-radius:12px }
 progress::-webkit-progress-value{ background: var(--accent); border-radius:12px }
 progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
-
-footer{color:var(--muted); font-size:12px; margin:36px 0; text-align:center}
-@media (max-width: 720px){ .wrap{ padding:12px; } .topbar{ flex-wrap:wrap } }
 </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <div class="topbar">
-        <div class="brand">
-          <div class="logo" aria-hidden="true"></div>
-          <div>
-            <h1>ThreadlessCoin</h1>
-            <div class="sub">A tiny, fun coin demo · 1,000,000 max supply</div>
-          </div>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>ThreadlessCoin</h1>
+          <div class="sub">A tiny, fun coin demo · 1,000,000 max supply</div>
         </div>
-
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="theme-switch">
-            Theme:
-            <select id="theme" class="theme-select" aria-label="Select theme">
-              <option value="forest">Forest</option>
-              <option value="sunset">Sunset</option>
-              <option value="midnight">Midnight</option>
-              <option value="ocean">Ocean</option>
-              <option value="grape">Grape</option>
-              <option value="mono">Mono</option>
-            </select>
-          </div>
-          <span class="meta" id="status">connecting…</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="theme-switch">
+          Theme:
+          <select id="theme" class="theme-select" aria-label="Select theme">
+            <option value="forest">Forest</option>
+            <option value="sunset">Sunset</option>
+            <option value="midnight">Midnight</option>
+            <option value="ocean">Ocean</option>
+            <option value="grape">Grape</option>
+            <option value="mono">Mono</option>
+          </select>
         </div>
+        <span class="meta" id="status">signed out</span>
       </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="wrap">
-    <!-- Account / Identity -->
-    <section class="card">
-      <h2 style="margin:0 0 8px">Account</h2>
+<main class="wrap">
+  <!-- Account -->
+  <section class="card">
+    <h2 style="margin:0 0 8px">Account</h2>
+    <div id="authArea">
+      <button class="btn" id="signInBtn">Sign in / Sign up via email</button>
+      <span class="meta">We’ll send a magic link.</span>
+    </div>
+    <div id="userArea" style="display:none">
+      <div class="meta" id="userEmail"></div>
+      <button class="btn" id="signOutBtn">Sign out</button>
+    </div>
+  </section>
 
-      <div id="signedOut">
-        <button class="btn" id="signInBtn">Sign in / Sign up via email</button>
-        <span class="meta">We’ll send a magic link.</span>
-      </div>
+  <!-- Mining -->
+  <section class="card">
+    <h2 style="margin:0 0 8px">Mine ThreadlessCoin</h2>
+    <div class="meta">Your browser crunches a tiny puzzle; correct proofs reward a few coins.</div>
+    <div class="progress-wrap">
+      <progress id="miningProgress" value="0" max="100"></progress>
+      <div id="progressLabel" class="meta" style="margin-top:4px">Idle</div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:10px">
+      <button class="btn" id="mineBtn" disabled>Start mining</button>
+      <button class="btn" id="stopBtn" disabled>Stop</button>
+    </div>
+    <div class="meta" id="mineMeta" style="margin-top:8px">Solved: 0 • Pending: 0 • Rewarded: 0 TCOIN</div>
+  </section>
 
-      <div id="signedIn" style="display:none">
-        <div class="identity">
-          <div><span class="meta">Email</span><div id="userEmail" class="badge"></div></div>
+  <!-- Send / Receive -->
+  <section class="card">
+    <h2 style="margin:0 0 8px">Send / Receive</h2>
+    <div class="meta" style="margin-bottom:10px">Add a friend by username, then send them TCOIN.</div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px">
+      <input id="friend" placeholder="friend username" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)" />
+      <input id="amount" type="number" min="0" step="0.0001" placeholder="amount" style="width:140px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+      <button class="btn" id="sendBtn">Send</button>
+    </div>
+    <div class="meta" id="sendMsg" style="margin-top:8px"></div>
+  </section>
 
-          <div>
-            <span class="meta">Username</span>
-            <div style="display:flex; gap:8px; align-items:center">
-              <input id="username" class="input" placeholder="pick a username" maxlength="24" style="min-width:200px">
-              <button class="btn" id="saveUserBtn">Save</button>
-            </div>
-            <div id="nameMsg" class="meta"></div>
-          </div>
+  <!-- Packages -->
+  <section class="card">
+    <h2 style="margin:0 0 8px">Packages (gift codes)</h2>
+    <div class="meta">Convert coins into a one-time “passid” gift code. Redeemable once.</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+      <input id="pkgAmt" type="number" min="0" step="0.0001" placeholder="amount to package" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+      <button class="btn" id="mkPkgBtn">Make Package</button>
+    </div>
+    <div class="meta" id="pkgOut" style="margin-top:8px"></div>
 
-          <div>
-            <span class="meta">Balance</span>
-            <div id="balance" class="big-balance">0.0000 TCOIN</div>
-          </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px">
+      <input id="redeemCode" placeholder="enter passid to redeem" style="flex:1; min-width:220px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink)"/>
+      <button class="btn" id="redeemBtn">Redeem</button>
+    </div>
+    <div class="meta" id="redeemMsg" style="margin-top:8px"></div>
+  </section>
 
-          <div style="margin-left:auto">
-            <button class="btn" id="signOutBtn">Sign out</button>
-          </div>
-        </div>
-      </div>
-    </section>
+  <footer class="meta" style="text-align:center;margin:36px 0">© 2025 ThreadlessCoin (demo)</footer>
+</main>
 
-    <!-- Mining -->
-    <section class="card">
-      <h2 style="margin:0 0 8px">Mine ThreadlessCoin</h2>
-      <div id="mineGuard" class="meta" style="margin-bottom:6px; display:none">
-        pick a username first to start mining.
-      </div>
-      <div class="progress-wrap">
-        <progress id="miningProgress" value="0" max="100"></progress>
-        <div id="progressLabel" class="meta" style="margin-top:4px">Idle</div>
-      </div>
-      <div style="display:flex; gap:8px; margin-top:10px">
-        <button class="btn" id="mineBtn" disabled>Start mining</button>
-        <button class="btn" id="stopBtn" disabled>Stop</button>
-      </div>
-      <div class="meta" id="mineMeta" style="margin-top:8px">Solved: 0 • Pending: 0 • Rewarded: 0.0000 TCOIN</div>
-    </section>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
 
-    <!-- Transfer -->
-    <section class="card">
-      <h2 style="margin:0 0 8px">Send / Receive</h2>
-      <div class="meta" style="margin-bottom:10px">Send TCOIN to a friend by username.</div>
-      <div style="display:flex; flex-wrap:wrap; gap:8px">
-        <input id="friend" class="input" placeholder="friend username" style="flex:1; min-width:220px;">
-        <input id="amount" class="input" type="number" min="0" step="0.0001" placeholder="amount" style="width:140px;">
-        <button class="btn" id="sendBtn">Send</button>
-      </div>
-      <div class="meta" id="sendMsg" style="margin-top:8px"></div>
-    </section>
+/* ====== CONFIG: PUT YOUR VALUES ====== */
+const TC = {
+  SUPABASE_URL:  "https://YOUR-PROJECT.supabase.co",     // <-- update
+  SUPABASE_ANON: "YOUR-ANON-KEY",                         // <-- update
+  sb: null,
+};
 
-    <!-- Packages -->
-    <section class="card">
-      <h2 style="margin:0 0 8px">Packages (gift codes)</h2>
-      <div class="meta">Turn coins into a one-time passid code. Anyone can redeem once.</div>
+/* ====== THEME ====== */
+(function setupTheme(){
+  const sel = document.getElementById('theme');
+  const saved = localStorage.getItem('threadless_theme') || 'forest';
+  document.documentElement.setAttribute('data-theme', saved);
+  sel.value = saved;
+  sel.addEventListener('change', ()=>{
+    const v = sel.value;
+    document.documentElement.setAttribute('data-theme', v);
+    localStorage.setItem('threadless_theme', v);
+  });
+})();
 
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
-        <input id="pkgAmt" class="input" type="number" min="0" step="0.0001" placeholder="amount to package" style="flex:1; min-width:220px"/>
-        <button class="btn" id="mkPkgBtn">Make Package</button>
-      </div>
-      <div class="meta" id="pkgOut" style="margin-top:8px"></div>
+/* ====== BOOT / AUTH ====== */
+(async function boot(){
+  console.log('[TC] boot A: init');
+  const status = document.getElementById('status');
+  const authArea = document.getElementById('authArea');
+  const userArea = document.getElementById('userArea');
+  const userEmail = document.getElementById('userEmail');
+  const mineBtn = document.getElementById('mineBtn');
+  const stopBtn = document.getElementById('stopBtn');
 
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px">
-        <input id="redeemCode" class="input" placeholder="enter passid to redeem" style="flex:1; min-width:220px"/>
-        <button class="btn" id="redeemBtn">Redeem</button>
-      </div>
-      <div class="meta" id="redeemMsg" style="margin-top:8px"></div>
-    </section>
-
-    <footer>
-      <div>© 2025 ThreadlessCoin (demo)</div>
-    </footer>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-  'use strict';
-
-  /* ===== CONFIG ===== */
-  const TC = {
-    // ⬇️ put YOUR values
-    SUPABASE_URL:  'https://vgdskvrovkekoxkixzsh.supabase.co',
-    SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZHNrdnJvdmtla294a2l4enNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NzIwOTYsImV4cCI6MjA3NDA0ODA5Nn0.e_wcEufQiUQpVwyAcshfOOdwf48gGzP8RiFOu5GYYmo',
-    // RPC names & table names — change here if needed
-    RPC: {
-      mine_once:      'mine_once',       // () -> { reward numeric }
-      send_coin:      'send_coin',       // (to_username text, amount numeric) -> void
-      make_package:   'make_package',    // (amount numeric) -> { passid text }
-      redeem_package: 'redeem_package',  // (code text) -> { credited numeric }
-    },
-    TABLES: {
-      profiles: 'profiles'               // columns: id uuid pk, email text, username text unique, balance numeric
-    },
-    sb: null,
-    user: null,
-    profile: null
-  };
-
-  /* ===== THEME ===== */
-  (function setupTheme(){
-    const sel = document.getElementById('theme');
-    const stored = localStorage.getItem('threadless_theme') || 'forest';
-    document.documentElement.setAttribute('data-theme', stored);
-    sel.value = stored;
-    sel.addEventListener('change', ()=>{
-      const v = sel.value;
-      document.documentElement.setAttribute('data-theme', v);
-      localStorage.setItem('threadless_theme', v);
-    });
-  })();
-
-  /* ===== UI refs ===== */
-  const el = {
-    status: document.getElementById('status'),
-    signedOut: document.getElementById('signedOut'),
-    signedIn: document.getElementById('signedIn'),
-    userEmail: document.getElementById('userEmail'),
-    username: document.getElementById('username'),
-    saveUserBtn: document.getElementById('saveUserBtn'),
-    nameMsg: document.getElementById('nameMsg'),
-    balance: document.getElementById('balance'),
-    signInBtn: document.getElementById('signInBtn'),
-    signOutBtn: document.getElementById('signOutBtn'),
-    mineGuard: document.getElementById('mineGuard'),
-    mineBtn: document.getElementById('mineBtn'),
-    stopBtn: document.getElementById('stopBtn'),
-    bar: document.getElementById('miningProgress'),
-    label: document.getElementById('progressLabel'),
-    meta: document.getElementById('mineMeta'),
-    friend: document.getElementById('friend'),
-    amount: document.getElementById('amount'),
-    sendBtn: document.getElementById('sendBtn'),
-    sendMsg: document.getElementById('sendMsg'),
-    pkgAmt: document.getElementById('pkgAmt'),
-    mkPkgBtn: document.getElementById('mkPkgBtn'),
-    pkgOut: document.getElementById('pkgOut'),
-    redeemCode: document.getElementById('redeemCode'),
-    redeemBtn: document.getElementById('redeemBtn'),
-    redeemMsg: document.getElementById('redeemMsg'),
-  };
-
-  const fmt = n => (Number(n||0)).toFixed(4);
-
-  /* ===== STATE HELPERS ===== */
-  function setStatus(s){ el.status.textContent = s; }
-  function setSignedInUI(on){
-    el.signedOut.style.display = on ? 'none' : '';
-    el.signedIn.style.display  = on ? '' : 'none';
+  function setStatus(s){ status.textContent = s; }
+  function setSignedInUI(email){
+    authArea.style.display = 'none';
+    userArea.style.display = '';
+    userEmail.textContent = email || '';
+    mineBtn.disabled = false;   // enable mining once signed in
+    stopBtn.disabled = true;
+    setStatus('online');
   }
-  function refreshMiningGuard(){
-    const canMine = !!(TC.user && TC.profile && TC.profile.username);
-    el.mineBtn.disabled = !canMine;
-    el.stopBtn.disabled = true;
-    el.mineGuard.style.display = canMine ? 'none' : '';
-  }
-  function renderProfile(){
-    if (!TC.profile) return;
-    el.userEmail.textContent = TC.user?.email || '';
-    el.username.value = TC.profile.username || '';
-    el.balance.textContent = `${fmt(TC.profile.balance || 0)} TCOIN`;
-    refreshMiningGuard();
+  function setSignedOutUI(){
+    authArea.style.display = '';
+    userArea.style.display = 'none';
+    mineBtn.disabled = true;
+    stopBtn.disabled = true;
+    setStatus('signed out');
   }
 
-  /* ===== SUPABASE BOOT ===== */
-  (async function boot(){
-    console.log('[TC] boot A: init');
-    TC.sb = supabase.createClient(TC.SUPABASE_URL, TC.SUPABASE_ANON);
+  // Create client immediately so it can parse magic-link fragments
+  TC.sb = supabase.createClient(TC.SUPABASE_URL, TC.SUPABASE_ANON);
 
-    // session & auth changes
-    TC.sb.auth.onAuthStateChange(async (_evt, session)=>{
-      TC.user = session?.user || null;
-      await hydrateProfile();
-    });
+  // If returning from email link, this will parse the URL (#access_token=...)
+  // and store the session; it also works if there is already a session.
+  const sessRes = await TC.sb.auth.getSession();
+  console.log('[TC] boot B: session?', !!sessRes?.data?.session);
 
-    // initial
-    const { data } = await TC.sb.auth.getSession();
-    TC.user = data?.session?.user || null;
+  // Keep UI in sync with any auth changes
+  TC.sb.auth.onAuthStateChange(async (event, session) => {
+    console.log('[TC] auth:', event);
+    if (session?.user) setSignedInUI(session.user.email);
+    else setSignedOutUI();
+  });
 
-    if (TC.user){
-      await hydrateProfile();
-    } else {
-      setStatus('signed out');
-      setSignedInUI(false);
-      refreshMiningGuard();
-    }
-  })();
+  // Initial user check
+  const ures = await TC.sb.auth.getUser();
+  if (ures.data?.user) setSignedInUI(ures.data.user.email);
+  else setSignedOutUI();
 
-  /* ===== AUTH UI ===== */
-  el.signInBtn.addEventListener('click', async ()=>{
-    const email = prompt('Enter your email for a magic sign-in link:');
+  // Buttons
+  document.getElementById('signInBtn').addEventListener('click', async ()=>{
+    const email = prompt('Enter your email for a magic link:');
     if (!email) return;
+    // send users to auth.html for the friendly success screen
     const redirectTo = new URL('./auth.html', location.href).href;
     const { error } = await TC.sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo }});
     alert(error ? ('Failed: ' + (error.message||'error')) : 'Check your email for the link!');
   });
 
-  el.signOutBtn.addEventListener('click', async ()=>{
+  document.getElementById('signOutBtn').addEventListener('click', async ()=>{
     await TC.sb.auth.signOut();
-    TC.user = null; TC.profile = null;
-    setSignedInUI(false);
-    setStatus('signed out');
-    el.balance.textContent = '0.0000 TCOIN';
-    refreshMiningGuard();
+    setSignedOutUI();
   });
+})();
 
-  /* ===== PROFILE ===== */
-  async function hydrateProfile(){
-    if (!TC.user){ setSignedInUI(false); return; }
-    setStatus('connecting…');
-    // ensure profile row exists
-    const { data, error } = await TC.sb
-      .from(TC.TABLES.profiles)
-      .select('id, email, username, balance')
-      .eq('id', TC.user.id).maybeSingle();
+/* ====== MINING (UI only demo) ====== */
+(function mining(){
+  const mineBtn = document.getElementById('mineBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const bar     = document.getElementById('miningProgress');
+  const label   = document.getElementById('progressLabel');
+  const meta    = document.getElementById('mineMeta');
 
-    if (error && error.code !== 'PGRST116'){ // ignore not-found
-      console.warn('profile select error', error); setStatus('online (profile err)'); setSignedInUI(true); return;
-    }
+  let running = false;
+  let solved = 0, pending = 0, rewarded = 0;
 
-    if (!data){
-      // create a row
-      const payload = { id: TC.user.id, email: TC.user.email, username: null, balance: 0 };
-      const ins = await TC.sb.from(TC.TABLES.profiles).insert(payload).select().maybeSingle();
-      if (ins.error){ console.warn('profile insert error', ins.error); }
-      TC.profile = ins.data || payload;
-    } else {
-      TC.profile = data;
-    }
-
-    setSignedInUI(true);
-    setStatus('online');
-    renderProfile();
-
-    // subscribe to balance changes
-    TC.sb
-      .channel('balances')
-      .on('postgres_changes',
-        { event:'UPDATE', schema:'public', table: TC.TABLES.profiles, filter:`id=eq.${TC.user.id}` },
-        payload=>{
-          const newRow = payload.new || {};
-          TC.profile.balance = newRow.balance;
-          el.balance.textContent = `${fmt(newRow.balance)} TCOIN`;
-        })
-      .subscribe();
-  }
-
-  el.saveUserBtn.addEventListener('click', async ()=>{
-    const u = (el.username.value || '').trim();
-    if (!u){ el.nameMsg.textContent = 'enter a username'; return; }
-    el.saveUserBtn.disabled = true;
-    const { data, error } = await TC.sb
-      .from(TC.TABLES.profiles)
-      .update({ username: u })
-      .eq('id', TC.user.id)
-      .select('username, balance')
-      .maybeSingle();
-    el.saveUserBtn.disabled = false;
-    if (error){
-      el.nameMsg.textContent = error.message.includes('unique') ? 'username taken' : ('error: ' + error.message);
-      return;
-    }
-    TC.profile.username = data.username;
-    el.nameMsg.textContent = 'saved ✓';
-    refreshMiningGuard();
-  });
-
-  /* ===== MINING ===== */
-  let mining = { on:false, solved:0, pending:0, rewarded:0 };
-
-  function updateMineMeta(){
-    el.meta.textContent = `Solved: ${mining.solved} • Pending: ${mining.pending} • Rewarded: ${fmt(mining.rewarded)} TCOIN`;
-  }
+  function updateMeta(){ meta.textContent = `Solved: ${solved} • Pending: ${pending} • Rewarded: ${rewarded.toFixed(4)} TCOIN`; }
 
   async function mineLoop(){
-    if (!mining.on) return;
-    el.bar.value = 0;
-    el.label.textContent = 'Working…';
-    mining.pending++; updateMineMeta();
+    running = true;
+    bar.value = 0;
+    label.textContent = 'Working…';
+    pending++;
 
-    // visual work
-    for (let i=0;i<=100 && mining.on;i++){
-      el.bar.value = i;
-      await new Promise(r=>setTimeout(r, 35)); // ~3.5s job
+    for (let i=0; i<=100 && running; i++){
+      bar.value = i;
+      await new Promise(r=>setTimeout(r, 40));
     }
-    if (!mining.on){ el.label.textContent = 'Stopped'; mining.pending=Math.max(0,mining.pending-1); updateMineMeta(); return; }
+    if (!running){ label.textContent='Stopped'; pending=Math.max(0,pending-1); updateMeta(); return; }
 
-    // ask server to credit reward
-    try{
-      const { data, error } = await TC.sb.rpc(TC.RPC.mine_once, {}); // <- your SQL should handle auth.uid()
-      if (error) throw error;
-      const reward = Number((data && (data.reward ?? data)) || 0);
-      mining.solved++; mining.pending=Math.max(0,mining.pending-1); mining.rewarded += reward;
-      el.label.textContent = `Proof found! +${fmt(reward)}`;
-      updateMineMeta();
+    solved++; pending--; rewarded += 0.1;
+    updateMeta();
+    label.textContent = 'Proof found! Reward +0.1';
+    bar.value = 100;
 
-      // pull fresh balance
-      const { data: fresh } = await TC.sb
-        .from(TC.TABLES.profiles).select('balance').eq('id', TC.user.id).maybeSingle();
-      if (fresh) { TC.profile.balance = fresh.balance; el.balance.textContent = `${fmt(fresh.balance)} TCOIN`; }
-    } catch(e){
-      console.warn('mine_once error', e);
-      el.label.textContent = 'error mining (see console)';
-    }
-
-    if (mining.on) setTimeout(mineLoop, 400);
+    if (running) setTimeout(()=>mineLoop(), 600);
   }
 
-  el.mineBtn.addEventListener('click', ()=>{
-    if (!TC.user || !TC.profile?.username){ refreshMiningGuard(); return; }
-    el.mineBtn.disabled = true; el.stopBtn.disabled = false;
-    mining.on = true; updateMineMeta(); mineLoop();
+  mineBtn.addEventListener('click', ()=>{
+    if (running) return;
+    running = true;
+    mineBtn.disabled = true;
+    stopBtn.disabled = false;
+    updateMeta();
+    mineLoop();
   });
 
-  el.stopBtn.addEventListener('click', ()=>{
-    mining.on = false; el.mineBtn.disabled = false; el.stopBtn.disabled = true;
-    el.label.textContent = 'Idle';
+  stopBtn.addEventListener('click', ()=>{
+    running = false;
+    mineBtn.disabled = false;
+    stopBtn.disabled = true;
+    label.textContent = 'Idle';
   });
 
-  /* ===== SEND / PACKAGES ===== */
-  el.sendBtn.addEventListener('click', async ()=>{
-    if (!TC.user){ el.sendMsg.textContent = 'sign in first'; return; }
-    const to = (el.friend.value||'').trim();
-    const amt = Number(el.amount.value||0);
-    if (!to || amt<=0){ el.sendMsg.textContent = 'enter friend & amount'; return; }
-    el.sendBtn.disabled = true;
-    try{
-      const { error } = await TC.sb.rpc(TC.RPC.send_coin, { to_username: to, amount: amt });
-      if (error) throw error;
-      el.sendMsg.textContent = `sent ${fmt(amt)} TCOIN to @${to}`;
-      el.amount.value = ''; el.friend.value='';
-    }catch(e){ el.sendMsg.textContent = 'error: '+(e.message||e); }
-    finally{ el.sendBtn.disabled = false; }
-  });
-
-  el.mkPkgBtn.addEventListener('click', async ()=>{
-    const amt = Number(el.pkgAmt.value||0);
-    if (amt<=0){ el.pkgOut.textContent = 'enter amount'; return; }
-    el.mkPkgBtn.disabled = true;
-    try{
-      const { data, error } = await TC.sb.rpc(TC.RPC.make_package, { amount: amt });
-      if (error) throw error;
-      const passid = (data && (data.passid ?? data)) || '(unknown)';
-      el.pkgOut.textContent = `Created package for ${fmt(amt)} — passid: ${passid}`;
-      el.pkgAmt.value='';
-    }catch(e){ el.pkgOut.textContent = 'error: '+(e.message||e); }
-    finally{ el.mkPkgBtn.disabled = false; }
-  });
-
-  el.redeemBtn.addEventListener('click', async ()=>{
-    const code = (el.redeemCode.value||'').trim();
-    if (!code){ el.redeemMsg.textContent = 'enter a passid'; return; }
-    el.redeemBtn.disabled = true;
-    try{
-      const { data, error } = await TC.sb.rpc(TC.RPC.redeem_package, { code });
-      if (error) throw error;
-      const credited = (data && (data.credited ?? data)) || 0;
-      el.redeemMsg.textContent = `Redeemed +${fmt(credited)} TCOIN`;
-      el.redeemCode.value='';
-    }catch(e){ el.redeemMsg.textContent = 'error: '+(e.message||e); }
-    finally{ el.redeemBtn.disabled = false; }
-  });
-  </script>
+  updateMeta();
+})();
+</script>
 </body>
 </html>
