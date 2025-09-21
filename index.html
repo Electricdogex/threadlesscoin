@@ -11,8 +11,8 @@
   form-action 'self';
   img-src 'self' data:;
   style-src 'self' 'unsafe-inline';
-  script-src 'self' https://cdn.jsdelivr.net https://cdn.skypack.dev 'unsafe-inline';
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+  script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+  connect-src 'self' https://vgdskvrovkekoxkixzsh.supabase.co wss://vgdskvrovkekoxkixzsh.supabase.co;
   upgrade-insecure-requests;">
 <meta http-equiv="Referrer-Policy" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
@@ -196,7 +196,6 @@ progress::-moz-progress-bar{ background: var(--accent); border-radius:12px }
     <footer><div>© 2025 ThreadlessCoin (demo)</div></footer>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
